@@ -1,0 +1,2 @@
+add_subdirectory(app_GraphicsTests)
+add_subdirectory(app_UnitTests)
