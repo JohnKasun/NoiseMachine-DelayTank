@@ -1,5 +1,6 @@
 set(TEST_FILES
-        lib_DelayTankEngine/test/testDelayTankEngine.cpp)
+        lib_DelayTankEngine/test/testDelayTankEngine.cpp
+        lib_DelayTankEngine/test/testDelay.cpp)
 list(TRANSFORM TEST_FILES PREPEND "${CMAKE_SOURCE_DIR}/src/")
 
 set(APP app_UnitTests)

@@ -14,6 +14,8 @@ Delay::~Delay()
 void Delay::setDelay(float delayInSeconds)
 {
 	int delayInSamples = CUtil::float2int<int>(delayInSeconds * mSampleRate);
+	if (delayInSamples < 0.0f || delayInSamples > mDelayLine->getLength() - 1) 
+		throw Exception("Invalid Delay Parameter");
 	mDelayLine->setWriteIdx(mDelayLine->getReadIdx() + delayInSamples);
 }
 
@@ -23,10 +25,10 @@ void Delay::setGain(float gain)
 	mGain = gain;
 }
 
-void Delay::setPan(int pan)
+void Delay::setPan(float pan)
 {
-	if (pan < -100 || pan > 100) throw Exception("Invalid Pan Parameter");
-	mPan = (pan + 100) / 200.0f;
+	if (pan < -100.0f || pan > 100.0f) throw Exception("Invalid Pan Parameter");
+	mPan = (pan + 100.0f) / 200.0f;
 }
 
 std::pair<float, float> Delay::process(float input)
@@ -44,7 +46,7 @@ std::pair<float, float> Delay::process(float input)
 
 float Delay::getDelay() const
 {
-	return mDelayLine->getNumValuesInBuffer();
+	return mDelayLine->getNumValuesInBuffer() / mSampleRate;
 }
 
 float Delay::getGain() const

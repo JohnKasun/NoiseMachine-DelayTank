@@ -22,5 +22,5 @@ public:
 	int getPan(int index) const;
 private:
 	std::vector<std::unique_ptr<Delay>> mDelays;
-	int mNumActiveDelays;
+	int mNumActiveDelays = 0;
 };
