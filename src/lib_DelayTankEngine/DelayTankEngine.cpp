@@ -12,26 +12,36 @@ DelayTankEngine::~DelayTankEngine()
 	mDelays.clear();
 }
 
-void DelayTankEngine::setDelay(int index, float delayInSeconds)
+bool DelayTankEngine::addDelay(int id)
 {
-	mDelays.at(index)->setDelay(delayInSeconds);
+	return false;
 }
 
-void DelayTankEngine::setGain(int index, float gain)
+bool DelayTankEngine::removeDelay(int id)
 {
-	mDelays.at(index)->setGain(gain);
+	return false;
 }
 
-void DelayTankEngine::setPan(int index, int pan)
+void DelayTankEngine::setDelay(int id, float delayInSeconds)
 {
-	mDelays.at(index)->setPan(pan);
+	mDelays.at(id)->setDelay(delayInSeconds);
+}
+
+void DelayTankEngine::setGain(int id, float gain)
+{
+	mDelays.at(id)->setGain(gain);
+}
+
+void DelayTankEngine::setPan(int id, int pan)
+{
+	mDelays.at(id)->setPan(pan);
 }
 
 std::pair<float, float> DelayTankEngine::process(float input)
 {
 	auto outputSumL = 0.0f;
 	auto outputSumR = 0.0f;
-	for (int i = 0; i < mNumActiveDelays; i++) {
+	for (auto& i : mActiveDelays) {
 		auto output = mDelays.at(i)->process(input);
 		outputSumL += output.first;
 		outputSumR += output.second;
@@ -39,17 +49,17 @@ std::pair<float, float> DelayTankEngine::process(float input)
 	return std::make_pair(outputSumL, outputSumR);
 }
 
-float DelayTankEngine::getDelay(int index) const
+float DelayTankEngine::getDelay(int id) const
 {
-	return mDelays.at(index)->getDelay();
+	return mDelays.at(id)->getDelay();
 }
 
-float DelayTankEngine::getGain(int index) const
+float DelayTankEngine::getGain(int id) const
 {
-	return mDelays.at(index)->getGain();
+	return mDelays.at(id)->getGain();
 }
 
-int DelayTankEngine::getPan(int index) const
+int DelayTankEngine::getPan(int id) const
 {
-	return mDelays.at(index)->getPan();
+	return mDelays.at(id)->getPan();
 }
