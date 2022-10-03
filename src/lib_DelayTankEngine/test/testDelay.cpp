@@ -98,3 +98,20 @@ TEST_F(DelayTestSuite, Gain) {
 		TearDown();
 	}
 }
+
+TEST_F(DelayTestSuite, Pan) {
+	const std::pair<float, std::pair<float, float>> pans[]{
+		{-100, {1.0f, 0.0f}},
+		{0, {0.5f, 0.5f}},
+		{100, {0.0f, 1.0f}}
+	};
+	for (const auto pan : pans) {
+		SetUp();
+		mDelay->setPan(pan.first);
+		mDelay->setDelay(0);
+		mInput[0] = 1;
+		auto out = mDelay->process(1);
+		EXPECT_EQ(pan.second, out);
+		TearDown();
+	}
+}
