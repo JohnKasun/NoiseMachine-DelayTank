@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include <unordered_set>
+#include <queue>
+#include <functional>
 
 #include "Exception.h"
 #include "Exception.h"
@@ -13,7 +15,7 @@ public:
 	DelayTankEngine(float maxDelayInSeconds, int maxNumDelays, float sampleRate);
 	~DelayTankEngine();
 
-	bool addDelay(int id);
+	int addDelay();
 	bool removeDelay(int id);
 
 	void setDelay(int id, float delayinSeconds);
@@ -27,4 +29,5 @@ public:
 private:
 	std::vector<std::unique_ptr<Delay>> mDelays;
 	std::unordered_set<int> mActiveDelays;
+	std::priority_queue<int, std::vector<int>, std::greater<int>> mIdBackLog;
 };

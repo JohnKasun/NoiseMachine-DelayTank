@@ -4,6 +4,7 @@ DelayTankEngine::DelayTankEngine(float maxDelayInSeconds, int maxNumDelays, floa
 {
 	for (auto i = 0; i < maxNumDelays; i++) {
 		mDelays.emplace_back(new Delay(maxDelayInSeconds, sampleRate));
+		mIdBackLog.push(i);
 	}
 }
 
@@ -12,14 +13,22 @@ DelayTankEngine::~DelayTankEngine()
 	mDelays.clear();
 }
 
-bool DelayTankEngine::addDelay(int id)
+int DelayTankEngine::addDelay()
 {
-	return false;
+	if (mIdBackLog.empty()) throw Exception("Max Delays Reached");
+	auto id = mIdBackLog.top();
+	mIdBackLog.pop();
+	mActiveDelays.insert(id);
+	return id;
 }
 
 bool DelayTankEngine::removeDelay(int id)
 {
-	return false;
+	auto wasErased = static_cast<bool>(mActiveDelays.erase(id));
+	if (wasErased) {
+		mIdBackLog.push(id);
+	}
+	return wasErased;
 }
 
 void DelayTankEngine::setDelay(int id, float delayInSeconds)
