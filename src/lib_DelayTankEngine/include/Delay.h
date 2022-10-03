@@ -22,7 +22,7 @@ public:
 private:
 	std::unique_ptr<CRingBuffer<float>> mDelayLine;
 
-	float mPan = 0.0f;
+	float mPan = 0.5f;
 	float mGain = 1.0f;
 	float mSampleRate = 44100.0f;
 };

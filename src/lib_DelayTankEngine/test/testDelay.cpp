@@ -1,18 +1,39 @@
 #include <gtest/gtest.h>
+#include <array>
+#include <vector>
+
 #include "Delay.h"
 #include "GTestUtil.h"
+#include "Vector.h"
 
 class DelayTestSuite: public ::testing::Test
 {
 protected:
 	void SetUp() override {
 		mDelay.reset(new Delay(10, mSampleRate));
+		mInput.reset(new float[mNumSamples] {});
+		for (auto i = 0; i < mOutput.size(); i++) {
+			mOutput.at(i).reset(new float[mNumSamples] {});
+			mGround.at(i).reset(new float[mNumSamples] {});
+		}
+	}
+	void ClearBuffers() {
+		mInput.reset();
+		for (auto i = 0; i < mOutput.size(); i++) {
+			mOutput.at(i).reset();
+			mGround.at(i).reset();
+		}
 	}
 	void TearDown() override {
-
+		ClearBuffers();
+		mDelay.reset();
 	}
 	std::unique_ptr<Delay> mDelay;
+	std::unique_ptr<float[]> mInput;
+	std::array<std::unique_ptr<float[]>, 2> mOutput;
+	std::array<std::unique_ptr<float[]>, 2> mGround;
 	float mSampleRate = 44100.0f;
+	int mNumSamples = 10000;
 };
 
 TEST_F(DelayTestSuite, ParameterBounds) {
@@ -44,18 +65,22 @@ TEST_F(DelayTestSuite, ParameterSetting) {
 }
 
 TEST_F(DelayTestSuite, Delay) {
-	mDelay->setDelay(0.1);
-	auto sampleDelay = CUtil::float2int<int>(5 * mSampleRate);
-
-	const int numSamples = 10000;
-	float input[numSamples]{};
-	float output[numSamples]{};
-	float ground[numSamples]{};
-	input[0] = 1;
-	ground[sampleDelay] = 1;
-	for (int i = 0; i < numSamples; i++) {
-		auto out = mDelay->process(input[i]);
-		output[i] = out.first + out.second;
+	const float delays[]{ 0, 0.025, 0.05, 0.075, 0.1, 0.125 };
+	for (const auto delay : delays) {
+		SetUp();
+		mInput[0] = 1;
+		mDelay->setDelay(delay);
+		auto sampleDelay = CUtil::float2int<int>(delay * mSampleRate);
+		mGround.at(0)[sampleDelay] = 0.5;
+		mGround.at(1)[sampleDelay] = 0.5;
+		for (int i = 0; i < mNumSamples; i++) {
+			auto out = mDelay->process(mInput[i]);
+			mOutput.at(0)[i] = out.first;
+			mOutput.at(1)[i] = out.second;
+		}
+		GTestUtil::compare(mOutput.at(0).get(), mGround.at(0).get(), mNumSamples);
+		GTestUtil::compare(mOutput.at(1).get(), mGround.at(1).get(), mNumSamples);
+		TearDown();
 	}
-	GTestUtil::compare(output, ground, numSamples);
+
 }
