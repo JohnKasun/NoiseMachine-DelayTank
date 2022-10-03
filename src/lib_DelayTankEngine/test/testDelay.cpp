@@ -71,6 +71,7 @@ TEST_F(DelayTestSuite, Delay) {
 		mInput[0] = 1;
 		mDelay->setDelay(delay);
 		auto sampleDelay = CUtil::float2int<int>(delay * mSampleRate);
+		assert(sampleDelay < mNumSamples);
 		mGround.at(0)[sampleDelay] = 0.5;
 		mGround.at(1)[sampleDelay] = 0.5;
 		for (int i = 0; i < mNumSamples; i++) {
@@ -82,5 +83,18 @@ TEST_F(DelayTestSuite, Delay) {
 		GTestUtil::compare(mOutput.at(1).get(), mGround.at(1).get(), mNumSamples);
 		TearDown();
 	}
+}
 
+TEST_F(DelayTestSuite, Gain) {
+	const float gains[]{ 0, 0.25, 0.5, 0.75, 1};
+	for (const auto gain : gains) {
+		SetUp();
+		mDelay->setGain(gain);
+		mDelay->setDelay(0);
+		mInput[0] = 1;
+		auto out = mDelay->process(1);
+		EXPECT_EQ(0.5f * gain, out.first);
+		EXPECT_EQ(0.5f * gain, out.first);
+		TearDown();
+	}
 }
