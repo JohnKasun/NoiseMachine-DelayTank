@@ -12,22 +12,25 @@
 
 class DelayTankEngine {
 public:
+	enum Parameters {
+		DelayTime,
+		Gain,
+		Pan
+	};
 	DelayTankEngine(float maxDelayInSeconds, int maxNumDelays, float sampleRate);
 	~DelayTankEngine();
 
 	int addDelay();
-	bool removeDelay(int id);
+	void removeDelay(int id);
 
-	void setDelay(int id, float delayinSeconds);
-	void setGain(int id, float gain);
-	void setPan(int id, int pan);
+	void setParameter(int id, Parameters param, float value);
+	float getParameter(int id, Parameters param) const;
 	std::pair<float, float> process(float input);
 
-	float getDelay(int id) const;
-	float getGain(int id) const;
-	int getPan(int id) const;
 private:
 	std::vector<std::unique_ptr<Delay>> mDelays;
 	std::unordered_set<int> mActiveDelays;
 	std::priority_queue<int, std::vector<int>, std::greater<int>> mIdBackLog;
+
+	bool isValidId(int id) const;
 };

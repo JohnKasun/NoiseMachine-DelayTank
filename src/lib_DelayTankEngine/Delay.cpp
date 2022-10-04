@@ -46,7 +46,7 @@ void Delay::resetParameters()
 		mDelayLine->getPostInc();
 	}
 	setDelay(0.0f);
-	setPan(0.5f);
+	setPan(0.0f);
 	setGain(1.0f);
 }
 

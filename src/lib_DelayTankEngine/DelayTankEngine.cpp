@@ -22,28 +22,40 @@ int DelayTankEngine::addDelay()
 	return id;
 }
 
-bool DelayTankEngine::removeDelay(int id)
+void DelayTankEngine::removeDelay(int id)
 {
-	auto wasErased = static_cast<bool>(mActiveDelays.erase(id));
-	if (wasErased) {
-		mIdBackLog.push(id);
+	if (!isValidId(id)) throw Exception("Invalid Id");
+	mActiveDelays.erase(id);
+	mIdBackLog.push(id);
+	mDelays.at(id)->resetParameters();
+}
+
+void DelayTankEngine::setParameter(int id, Parameters param, float value)
+{
+	if (!isValidId(id)) throw Exception("Invalid Id");
+	switch (param) {
+	case DelayTime:
+		mDelays.at(id)->setDelay(value);
+		break;
+	case Gain:
+		mDelays.at(id)->setGain(value);
+		break;
+	default:
+		mDelays.at(id)->setPan(value);
 	}
-	return wasErased;
 }
 
-void DelayTankEngine::setDelay(int id, float delayInSeconds)
+float DelayTankEngine::getParameter(int id, Parameters param) const
 {
-	mDelays.at(id)->setDelay(delayInSeconds);
-}
-
-void DelayTankEngine::setGain(int id, float gain)
-{
-	mDelays.at(id)->setGain(gain);
-}
-
-void DelayTankEngine::setPan(int id, int pan)
-{
-	mDelays.at(id)->setPan(pan);
+	if (!isValidId(id)) throw Exception("Invalid Id");
+	switch (param) {
+	case DelayTime:
+		return mDelays.at(id)->getDelay();
+	case Gain:
+		return mDelays.at(id)->getGain();
+	default:
+		return mDelays.at(id)->getPan();
+	}
 }
 
 std::pair<float, float> DelayTankEngine::process(float input)
@@ -58,17 +70,10 @@ std::pair<float, float> DelayTankEngine::process(float input)
 	return std::make_pair(outputSumL, outputSumR);
 }
 
-float DelayTankEngine::getDelay(int id) const
+bool DelayTankEngine::isValidId(int id) const
 {
-	return mDelays.at(id)->getDelay();
-}
-
-float DelayTankEngine::getGain(int id) const
-{
-	return mDelays.at(id)->getGain();
-}
-
-int DelayTankEngine::getPan(int id) const
-{
-	return mDelays.at(id)->getPan();
+	auto found = mActiveDelays.find(id);
+	if (found != mActiveDelays.end())
+		return true;
+	return false;
 }
