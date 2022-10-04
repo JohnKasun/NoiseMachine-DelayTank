@@ -41,7 +41,7 @@ TEST_F(DelayTankEngineTestSuite, AddingDelays) {
 	EXPECT_ANY_THROW(mDelayTank->addDelay());
 }
 
-TEST_F(DelayTankEngineTestSuite, RemovingDelays) {
+TEST_F(DelayTankEngineTestSuite, IdBackLog) {
 	mDelayTank->addDelay();
 	mDelayTank->addDelay();
 	mDelayTank->addDelay();
@@ -50,4 +50,10 @@ TEST_F(DelayTankEngineTestSuite, RemovingDelays) {
 	EXPECT_EQ(0, mDelayTank->addDelay());
 	EXPECT_EQ(1, mDelayTank->addDelay());
 	EXPECT_EQ(3, mDelayTank->addDelay());
+}
+
+TEST_F(DelayTankEngineTestSuite, RemovingDelays) {
+	EXPECT_FALSE(mDelayTank->removeDelay(0));
+	mDelayTank->addDelay();
+	EXPECT_TRUE(mDelayTank->removeDelay(0));
 }

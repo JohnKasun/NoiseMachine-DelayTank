@@ -15,6 +15,7 @@ public:
 	void setGain(float gain);
 	void setPan(float pan);
 	std::pair<float, float> process(float input);
+	void resetParameters();
 
 	float getDelay() const;
 	float getGain() const;
@@ -25,4 +26,7 @@ private:
 	float mPan = 0.5f;
 	float mGain = 1.0f;
 	float mSampleRate = 44100.0f;
+
+	float readDelay();
+	void writeDelay(float input);
 };

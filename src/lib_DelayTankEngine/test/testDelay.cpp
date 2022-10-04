@@ -115,3 +115,23 @@ TEST_F(DelayTestSuite, Pan) {
 		TearDown();
 	}
 }
+
+TEST_F(DelayTestSuite, ChangingDelayTime) {
+	std::vector<float> delays{ 0.01, 0.005f, 0.015 };
+	int counter = 0.0f;
+	for (const auto delay : delays) {
+		mDelay->setDelay(delay);
+		mDelay->process(1.0f);
+		auto delayIndex = counter + CUtil::float2int<int>(delay * mSampleRate);
+		mGround.at(0)[delayIndex] = 0.5f;
+		mGround.at(1)[delayIndex] = 0.5f;
+		counter++;
+	}
+	for (auto i = 3; i < mNumSamples; i++) {
+		auto output = mDelay->process(0.0f);
+		mOutput.at(0)[i] = output.first;
+		mOutput.at(1)[i] = output.second;
+	}
+	GTestUtil::compare(mGround.at(0).get(), mOutput.at(0).get(), mNumSamples);
+	GTestUtil::compare(mGround.at(1).get(), mOutput.at(1).get(), mNumSamples);
+}
