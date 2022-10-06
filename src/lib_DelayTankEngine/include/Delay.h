@@ -19,7 +19,7 @@ public:
 
 	float getDelay() const;
 	float getGain() const;
-	int getPan() const;
+	float getPan() const;
 private:
 	std::unique_ptr<CRingBuffer<float>> mDelayLine;
 

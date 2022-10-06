@@ -12,7 +12,7 @@
 
 class DelayTankEngine {
 public:
-	enum Parameters {
+	enum class Parameters {
 		DelayTime,
 		Gain,
 		Pan

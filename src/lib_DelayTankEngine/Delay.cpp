@@ -60,7 +60,7 @@ float Delay::getGain() const
 	return mGain;
 }
 
-int Delay::getPan() const
+float Delay::getPan() const
 {
 	return (mPan * 200.0f) - 100.0f;
 }

@@ -34,10 +34,10 @@ void DelayTankEngine::setParameter(int id, Parameters param, float value)
 {
 	if (!isValidId(id)) throw Exception("Invalid Id");
 	switch (param) {
-	case DelayTime:
+	case Parameters::DelayTime:
 		mDelays.at(id)->setDelay(value);
 		break;
-	case Gain:
+	case Parameters::Gain:
 		mDelays.at(id)->setGain(value);
 		break;
 	default:
@@ -49,9 +49,9 @@ float DelayTankEngine::getParameter(int id, Parameters param) const
 {
 	if (!isValidId(id)) throw Exception("Invalid Id");
 	switch (param) {
-	case DelayTime:
+	case Parameters::DelayTime:
 		return mDelays.at(id)->getDelay();
-	case Gain:
+	case Parameters::Gain:
 		return mDelays.at(id)->getGain();
 	default:
 		return mDelays.at(id)->getPan();

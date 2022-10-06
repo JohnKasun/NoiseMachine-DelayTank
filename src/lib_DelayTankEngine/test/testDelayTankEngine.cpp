@@ -68,9 +68,9 @@ TEST_F(DelayTankEngineTestSuite, ParametersSetCorrectly) {
 	mDelayTank->setParameter(id, DelayTankEngine::Parameters::DelayTime, 0.01);
 	mDelayTank->setParameter(id, DelayTankEngine::Parameters::Gain, 0.5);
 	mDelayTank->setParameter(id, DelayTankEngine::Parameters::Pan, 50);
-	EXPECT_EQ(0.01f, mDelayTank->getParameter(id, DelayTankEngine::DelayTime));
-	EXPECT_EQ(0.5f, mDelayTank->getParameter(id, DelayTankEngine::Gain));
-	EXPECT_EQ(50, mDelayTank->getParameter(id, DelayTankEngine::Pan));
+	EXPECT_EQ(0.01f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::DelayTime));
+	EXPECT_EQ(0.5f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Gain));
+	EXPECT_EQ(50, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Pan));
 }
 
 TEST_F(DelayTankEngineTestSuite, ParameterBoundsHandling) {
@@ -83,7 +83,7 @@ TEST_F(DelayTankEngineTestSuite, ParameterBoundsHandling) {
 	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::Pan, 2293));
 }
 
-TEST_F(DelayTankEngineTestSuite, settingParametersOnNonExistentDelay) {
+TEST_F(DelayTankEngineTestSuite, SettingParametersOnNonExistentDelay) {
 	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::DelayTime, 0.3));
 }
 
@@ -97,4 +97,48 @@ TEST_F(DelayTankEngineTestSuite, ParametersResetUponRemoval) {
 	EXPECT_EQ(0.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::DelayTime));
 	EXPECT_EQ(1.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Gain));
 	EXPECT_EQ(0.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Pan));
+}
+
+TEST_F(DelayTankEngineTestSuite, MultipleDelayDelaytime) {
+	auto delay1Id = mDelayTank->addDelay();
+	auto delay2Id = mDelayTank->addDelay();
+	auto delay3Id = mDelayTank->addDelay();
+	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::DelayTime, 0.05);
+	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::DelayTime, 0.05);
+	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::DelayTime, 0.05);
+	auto sampleDelay = CUtil::float2int<int>(0.05 * mSampleRate);
+	mGround.at(0)[sampleDelay] = 1.5;
+	mGround.at(1)[sampleDelay] = 1.5;
+	mDelayTank->process(1.0f);
+	for (int i = 1; i < mNumSamples; i++) {
+		auto out = mDelayTank->process(0.0f);
+		mOutput.at(0)[i] = out.first;
+		mOutput.at(1)[i] = out.second;
+	}
+	GTestUtil::compare(mGround.at(0).get(), mOutput.at(0).get(), mNumSamples);
+	GTestUtil::compare(mGround.at(1).get(), mOutput.at(1).get(), mNumSamples);
+}
+
+TEST_F(DelayTankEngineTestSuite, MultipleDelayPan) {
+	auto delay1Id = mDelayTank->addDelay();
+	auto delay2Id = mDelayTank->addDelay();
+	auto delay3Id = mDelayTank->addDelay();
+	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::Pan, -100);
+	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::Pan, -100);
+	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::Pan, 100);
+	auto out = mDelayTank->process(1.0f);
+	EXPECT_EQ(2.0f, out.first);
+	EXPECT_EQ(1.0f, out.second);
+}
+
+TEST_F(DelayTankEngineTestSuite, MultipleDelayGain) {
+	auto delay1Id = mDelayTank->addDelay();
+	auto delay2Id = mDelayTank->addDelay();
+	auto delay3Id = mDelayTank->addDelay();
+	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::Gain, 0.5);
+	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::Gain, 0.1);
+	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::Gain, 0.2);
+	auto out = mDelayTank->process(1.0f);
+	EXPECT_EQ(0.4f, out.first);
+	EXPECT_EQ(0.4f, out.second);
 }
