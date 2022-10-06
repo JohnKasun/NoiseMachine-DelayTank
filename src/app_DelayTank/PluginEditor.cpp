@@ -2,8 +2,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p, juce::ValueTree& vts)
+    : AudioProcessorEditor (&p), processorRef (p), mParameters(vts)
 {
     juce::ignoreUnused (processorRef);
     // Make sure that before the constructor has finished, you've set the

@@ -47,7 +47,11 @@ public:
 private:
     const static int MaxNumberOfDelays = 10;
 
-    std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState>> mParameters;
+    juce::ValueTree mParameterRanges{ juce::Identifier("ParameterRanges") };
+    juce::ValueTree mParameterValues{ juce::Identifier("ParameterValues") };
+    std::vector<std::atomic<float>*> mDelayTime;
+    std::vector<std::atomic<float>*> mPan;
+    std::vector<std::atomic<float>*> mGain;
 
     std::unique_ptr<DelayTankEngine> mDelayTank;
 
