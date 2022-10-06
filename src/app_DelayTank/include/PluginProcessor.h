@@ -2,6 +2,8 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+#include "DelayTankEngine.h"
+
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -43,6 +45,13 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    const static int MaxNumberOfDelays = 10;
+
+    std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState>> mParameters;
+
+    std::unique_ptr<DelayTankEngine> mDelayTank;
+
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };
