@@ -8,31 +8,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                        )
 {
-    juce::ValueTree delayRanges("Delay");
-    delayRanges.setProperty(juce::Identifier("Max"), 3.0f, nullptr);
-    delayRanges.setProperty(juce::Identifier("Default"), 0.1f, nullptr);
-    delayRanges.setProperty(juce::Identifier("Min"), 0.0f, nullptr);
-    juce::ValueTree panRanges("Pan");
-    panRanges.setProperty(juce::Identifier("Max"), 100, nullptr);
-    panRanges.setProperty(juce::Identifier("Default"), 0.0f, nullptr);
-    panRanges.setProperty(juce::Identifier("Min"), -100.0f, nullptr);
-    juce::ValueTree gainRanges("Gain");
-    gainRanges.setProperty(juce::Identifier("Max"), 1.0f, nullptr);
-    gainRanges.setProperty(juce::Identifier("Default"), 1.0f, nullptr);
-    gainRanges.setProperty(juce::Identifier("Min"), 0.0f, nullptr);
-    mParameterRanges.addChild(delayRanges, 0, nullptr);
-    mParameterRanges.addChild(panRanges, 1, nullptr);
-    mParameterRanges.addChild(gainRanges, 2, nullptr);
-
     for (int i = 0; i < MaxNumberOfDelays; i++) {
-        juce::ValueTree params(juce::Identifier("Delay" + juce::String(i)));
-        params.setProperty(juce::Identifier("DelayTime"), mParameterRanges.getChild(0).getProperty(juce::Identifier("Default")), nullptr);
-        params.setProperty(juce::Identifier("Pan"), mParameterRanges.getChild(1).getProperty(juce::Identifier("Default")), nullptr);
-        params.setProperty(juce::Identifier("Gain"), mParameterRanges.getChild(2).getProperty(juce::Identifier("Default")), nullptr);
-        mDelayTime.emplace_back(params.getPropertyPointer("DelayTime"));
-        mPan.emplace_back(params.getPropertyPointer("Pan"));
-        mGain.emplace_back(params.getPropertyPointer("Gain"));
-        mParameterValues.addChild(params, i, nullptr);
+        addParameter(mParamPtrs[i][0] = new juce::AudioParameterFloat(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
+        addParameter(mParamPtrs[i][1] = new juce::AudioParameterFloat(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
+        addParameter(mParamPtrs[i][2] = new juce::AudioParameterFloat(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
     }
 }
 
@@ -128,15 +107,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     juce::ScopedNoDenormals noDenormals;
 
     for (int i = 0; i < MaxNumberOfDelays; i++) {
-        auto delay = mParameterValues.getChild(i);
-        try {
-            mDelayTank->setParameter(i, DelayTankEngine::Parameters::DelayTime, delay.getProperty(juce::Identifier("DelayTime")));
-            mDelayTank->setParameter(i, DelayTankEngine::Parameters::Pan, delay.getProperty(juce::Identifier("Pan")));
-            mDelayTank->setParameter(i, DelayTankEngine::Parameters::Gain, delay.getProperty(juce::Identifier("Gain")));
-        }
-        catch (Exception& ex) {
 
-        }
     }
 }
 
@@ -148,7 +119,8 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor (*this, mParameterValues);
+   // return new AudioPluginAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -165,6 +137,13 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     juce::ignoreUnused (data, sizeInBytes);
+}
+
+void AudioPluginAudioProcessor::updateDelayParameters(int delayId, float delayTime, float gain, float pan)
+{
+    mParamPtrs[delayId][0]->setValueNotifyingHost(delayTime);
+    mParamPtrs[delayId][1]->setValueNotifyingHost(gain);
+    mParamPtrs[delayId][2]->setValueNotifyingHost(pan);
 }
 
 //==============================================================================
