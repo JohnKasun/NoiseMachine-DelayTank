@@ -10,6 +10,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     // editor's size to whatever you need it to be.
     setSize (400, 300);
 
+    processorRef.getParameter
 
     //On move, send processor id and values
     slider.onValueChange = [this]() {processorRef.updateDelayParameters(0, 1.0f, 1.0f, 1.0f); };
@@ -28,7 +29,7 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText (mParameters.state.getChild(0).getProperty("DelayTime"), getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText ("Hello World", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void AudioPluginAudioProcessorEditor::resized()

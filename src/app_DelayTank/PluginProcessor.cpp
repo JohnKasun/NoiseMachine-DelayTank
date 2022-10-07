@@ -1,18 +1,33 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
+    }
+}
+
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
      : AudioProcessor (BusesProperties()
                        .withInput  ("Input",  juce::AudioChannelSet::mono(), true)
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                       )
+                       ),
+    mParameters(*this, nullptr, "Parameters", createParameterLayout())
 {
-    for (int i = 0; i < MaxNumberOfDelays; i++) {
-        addParameter(mParamPtrs[i][0] = new juce::AudioParameterFloat(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
-        addParameter(mParamPtrs[i][1] = new juce::AudioParameterFloat(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
-        addParameter(mParamPtrs[i][2] = new juce::AudioParameterFloat(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
-    }
+
+    //TODO: Somehow set up juce::AudioProcessorValueTreeState
+
+    //for (int i = 0; i < MaxNumberOfDelays; i++) {
+    //    addParameter(mParamPtrs[i][0] = new juce::AudioParameterFloat(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
+    //    addParameter(mParamPtrs[i][1] = new juce::AudioParameterFloat(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
+    //    addParameter(mParamPtrs[i][2] = new juce::AudioParameterFloat(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
+    //}
+    mParamPtrs[0][0] = mParameters.getParameter("0d");
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
