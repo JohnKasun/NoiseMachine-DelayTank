@@ -14,6 +14,9 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     //On move, send processor id and values
     addAndMakeVisible(slider);
+    paramRef.getParameter("0d");
+    juce::AudioProcessorValueTreeState::SliderAttachment m(paramRef, "0d", slider);
+
     auto paramRange = paramRef.getParameterRange("0d");
     slider.setRange(paramRange.start, paramRange.end);
     slider.onValueChange = [this]() {processorRef.requestParameterChange(0, slider.getValue(), 1.0f, 1.0f); };
