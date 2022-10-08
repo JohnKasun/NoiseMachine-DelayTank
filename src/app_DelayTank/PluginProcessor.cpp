@@ -5,10 +5,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 5, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
     }
+    return layout;
 }
 
 //==============================================================================
@@ -19,15 +20,11 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                        ),
     mParameters(*this, nullptr, "Parameters", createParameterLayout())
 {
-
-    //TODO: Somehow set up juce::AudioProcessorValueTreeState
-
-    //for (int i = 0; i < MaxNumberOfDelays; i++) {
-    //    addParameter(mParamPtrs[i][0] = new juce::AudioParameterFloat(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 1, 1));
-    //    addParameter(mParamPtrs[i][1] = new juce::AudioParameterFloat(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
-    //    addParameter(mParamPtrs[i][2] = new juce::AudioParameterFloat(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
-    //}
-    mParamPtrs[0][0] = mParameters.getParameter("0d");
+    for (int i = 0; i < MaxNumberOfDelays; i++) {
+        mParamPtrs[i][0] = mParameters.getRawParameterValue(juce::String(i) + "d");
+        mParamPtrs[i][1] = mParameters.getRawParameterValue(juce::String(i) + "g");
+        mParamPtrs[i][2] = mParameters.getRawParameterValue(juce::String(i) + "p");
+    }
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
@@ -121,6 +118,8 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     juce::ScopedNoDenormals noDenormals;
 
+    buffer.applyGain(*mParamPtrs.at(0)[0]);
+
     for (int i = 0; i < MaxNumberOfDelays; i++) {
 
     }
@@ -134,8 +133,8 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-   // return new AudioPluginAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor (*this, mParameters);
+   // return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -154,11 +153,14 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
     juce::ignoreUnused (data, sizeInBytes);
 }
 
-void AudioPluginAudioProcessor::updateDelayParameters(int delayId, float delayTime, float gain, float pan)
+void AudioPluginAudioProcessor::requestParameterChange(int delayId, float delayTime, float gain, float pan)
 {
-    mParamPtrs[delayId][0]->setValueNotifyingHost(delayTime);
-    mParamPtrs[delayId][1]->setValueNotifyingHost(gain);
-    mParamPtrs[delayId][2]->setValueNotifyingHost(pan);
+    auto paramIdDelay = juce::String(delayId) + "d";
+    auto paramIdGain = juce::String(delayId) + "g";
+    auto paramIdPan = juce::String(delayId) + "p";
+    mParameters.getParameter(paramIdDelay)->setValueNotifyingHost(mParameters.getParameterRange(paramIdDelay).convertTo0to1(delayTime));
+    mParameters.getParameter(paramIdGain)->setValueNotifyingHost(mParameters.getParameterRange(paramIdGain).convertTo0to1(gain));
+    mParameters.getParameter(paramIdPan)->setValueNotifyingHost(mParameters.getParameterRange(paramIdPan).convertTo0to1(pan));
 }
 
 //==============================================================================

@@ -2,23 +2,26 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
+    : AudioProcessorEditor (&p), processorRef (p), paramRef(vts)
 {
     juce::ignoreUnused (processorRef);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
 
-    processorRef.getParameter
+    startTimer(5);
 
     //On move, send processor id and values
-    slider.onValueChange = [this]() {processorRef.updateDelayParameters(0, 1.0f, 1.0f, 1.0f); };
+    addAndMakeVisible(slider);
+    auto paramRange = paramRef.getParameterRange("0d");
+    slider.setRange(paramRange.start, paramRange.end);
+    slider.onValueChange = [this]() {processorRef.requestParameterChange(0, slider.getValue(), 1.0f, 1.0f); };
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
-   
+    stopTimer();
 }
 
 //==============================================================================
@@ -34,6 +37,15 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    slider.setBounds(getLocalBounds());
+}
+
+void AudioPluginAudioProcessorEditor::timerCallback()
+{
+    updateGraphics();
+}
+
+void AudioPluginAudioProcessorEditor::updateGraphics()
+{
+    slider.setValue(*paramRef.getRawParameterValue("0d"), juce::dontSendNotification);
 }

@@ -46,14 +46,14 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void updateDelayParameters(int delayId, float delayTime, float gain, float pan);
+    void requestParameterChange(int delayId, float delayTime, float gain, float pan);
     static int getMaxNumberOfDelays() { return MaxNumberOfDelays; };
 
 private:
     constexpr static int MaxNumberOfDelays = 10;
 
     juce::AudioProcessorValueTreeState mParameters;
-    std::array<std::array<juce::RangedAudioParameter*, 3>, MaxNumberOfDelays> mParamPtrs;
+    std::array<std::array<std::atomic<float>*, 3>, MaxNumberOfDelays> mParamPtrs;
 
     std::unique_ptr<DelayTankEngine> mDelayTank;
 
