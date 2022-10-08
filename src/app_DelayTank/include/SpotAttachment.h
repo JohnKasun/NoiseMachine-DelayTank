@@ -1,9 +1,11 @@
 #pragma once
 
+#include <memory>
+
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 
-class Spot
+class Spot : public juce::Component
 {
 
 };
@@ -11,20 +13,9 @@ class Spot
 class SpotParameterAttachment : private juce::MouseListener 
 {
 public:
-    /** Creates a connection between a plug-in parameter and a Slider.
-
-        @param parameter     The parameter to use
-        @param slider        The Slider to use
-        @param undoManager   An optional UndoManager
-    */
-    SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot);
-
-    /** Destructor. */
+    SpotParameterAttachment(juce::RangedAudioParameter& xParam, juce::RangedAudioParameter& yParam, Spot& spot);
     ~SpotParameterAttachment() override;
 
-    /** Call this after setting up your slider in the case where you need to do
-        extra setup after constructing this attachment.
-    */
     void sendInitialUpdate();
 
 private:
@@ -32,7 +23,8 @@ private:
     void mouseDrag(const juce::MouseEvent& event) override;
 
     Spot& spot;
-    juce::ParameterAttachment attachment;
+    juce::ParameterAttachment xAttachment;
+    juce::ParameterAttachment yAttachment;
     bool ignoreCallbacks = false;
 };
 
