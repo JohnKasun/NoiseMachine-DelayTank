@@ -3,7 +3,9 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    setSize(200, 200);
+    addAndMakeVisible(spot);
+
+    setSize(400, 400);
 }
 
 MainComponent::~MainComponent()
@@ -13,10 +15,12 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+
 }
 
 void MainComponent::resized()
 {
-
+    juce::Point<float> center(getX() + getWidth() / 2, getY() + getHeight() / 2);
+    spot.setCenter(center);
+    spot.setBounds(getLocalBounds());
 }
