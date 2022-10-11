@@ -4,7 +4,7 @@
 MainComponent::MainComponent()
 {
     setSize(400, 400);
-    addMouseListener(this, true);
+    addMouseListener(this, false);
 }
 
 MainComponent::~MainComponent()
@@ -20,13 +20,13 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    for (auto& spot : mSpots)
-        spot.setBounds(getLocalBounds());
+    for (auto& spot : mSpots) {
+        spot.resized();
+    }
 }
 
 void MainComponent::mouseDown(const juce::MouseEvent& event)
 {
-    mSpots.emplace_back(0, event.mouseDownPosition);
+    mSpots.emplace_back(0, juce::Rectangle<int>(event.x - 5, event.y - 5, 10, 10));
     addAndMakeVisible(mSpots.back());
-    mSpots.back().setBounds(getLocalBounds());
 }

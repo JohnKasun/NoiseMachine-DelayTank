@@ -1,28 +1,30 @@
 #include "DelayTankLookAndFeel.h"
 
-Spot::Spot(int id, juce::Point<float> center)
-	: mId(id), mCenter(center)
+Spot::Spot(int id, juce::Rectangle<int> bounds)
+	: mId(id), mBounds(bounds)
 {
+	setBounds(mBounds);
 }
 
-void Spot::setCenter(juce::Point<float> newCenter)
+void Spot::setCenter(juce::Point<int> newCenter)
 {
-	mCenter = newCenter;
+	mBounds.setCentre(newCenter);
+	setBounds(mBounds);
 }
 
-juce::Point<float> Spot::getCenter() const
+juce::Point<int> Spot::getCenter() const
 {
-	return mCenter;
+	return mBounds.getCentre();
 }
 
 void Spot::paint(juce::Graphics& g)
 {
-	juce::Rectangle<float> r(0, 0, 100, 100);
-	r.setCentre(mCenter);
+	auto area = getLocalBounds();
 	g.setColour(juce::Colours::red);
-	g.fillEllipse(r);
+	g.fillEllipse(area.toFloat());
 }
 
 void Spot::resized()
 {
+	setBounds(mBounds);
 }

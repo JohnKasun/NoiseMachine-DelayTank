@@ -5,12 +5,12 @@
 class Spot : public juce::Component
 {
 public:
-	Spot(int id = 0, juce::Point<float> center = {0,0});
-	void setCenter(juce::Point<float> newCenter);
-	juce::Point<float> getCenter() const;
+	Spot(int id = 0, juce::Rectangle<int> bounds = {0,0,10,10});
+	void setCenter(juce::Point<int> newCenter);
+	juce::Point<int> getCenter() const;
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 private:
 	int mId;
-	juce::Point<float> mCenter;
+	juce::Rectangle<int> mBounds;
 };
