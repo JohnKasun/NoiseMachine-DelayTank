@@ -23,7 +23,7 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
-    Spot spot{ 0,juce::Point<float>(0,0) };
+    Spot spot;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
