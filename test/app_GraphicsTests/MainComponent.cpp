@@ -3,16 +3,13 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    addAndMakeVisible(spot);
-
     setSize(400, 400);
-
-    juce::Point<float> center(getX() + getWidth() / 2, getY() + getHeight() / 2);
-    spot.setCenter(center);
+    addMouseListener(this, true);
 }
 
 MainComponent::~MainComponent()
 {
+    removeMouseListener(this);
 }
 
 //==============================================================================
@@ -23,5 +20,13 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    spot.setBounds(getLocalBounds());
+    for (auto& spot : mSpots)
+        spot.setBounds(getLocalBounds());
+}
+
+void MainComponent::mouseDown(const juce::MouseEvent& event)
+{
+    mSpots.emplace_back(0, event.mouseDownPosition);
+    addAndMakeVisible(mSpots.back());
+    mSpots.back().setBounds(getLocalBounds());
 }
