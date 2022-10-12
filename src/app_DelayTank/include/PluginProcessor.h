@@ -4,6 +4,14 @@
 
 #include "DelayTankEngine.h"
 
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+struct ParameterRatios {
+    float delaytimeRatio;
+    float panRatio;
+    float gainRatio;
+};
+
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -44,14 +52,16 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-private:
-    const static int MaxNumberOfDelays = 10;
+    int addDelay();
 
-    juce::ValueTree mParameterRanges{ juce::Identifier("ParameterRanges") };
-    juce::ValueTree mParameterValues{ juce::Identifier("ParameterValues") };
-    std::vector<std::atomic<float>*> mDelayTime;
-    std::vector<std::atomic<float>*> mPan;
-    std::vector<std::atomic<float>*> mGain;
+    void requestParameterChange(int delayId, float delayTime, float gain, float pan);
+    static int getMaxNumberOfDelays() { return MaxNumberOfDelays; };
+
+private:
+    constexpr static int MaxNumberOfDelays = 10;
+
+    juce::AudioProcessorValueTreeState mParameters;
+    std::array<std::array<std::atomic<float>*, 3>, MaxNumberOfDelays> mParamPtrs;
 
     std::unique_ptr<DelayTankEngine> mDelayTank;
 

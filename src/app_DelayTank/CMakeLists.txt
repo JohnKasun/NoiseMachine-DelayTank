@@ -23,6 +23,7 @@ target_compile_definitions(${APP}
 target_link_libraries(${APP}
     PRIVATE
         lib_DelayTankEngine
+        lib_DelayTankLookAndFeel
         juce::juce_audio_utils
         juce::juce_gui_extra
     PUBLIC

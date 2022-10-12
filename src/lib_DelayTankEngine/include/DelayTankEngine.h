@@ -5,8 +5,8 @@
 #include <unordered_set>
 #include <queue>
 #include <functional>
+#include <map>
 
-#include "Exception.h"
 #include "Exception.h"
 #include "Delay.h"
 
@@ -20,17 +20,16 @@ public:
 	DelayTankEngine(float maxDelayInSeconds, int maxNumDelays, float sampleRate);
 	~DelayTankEngine();
 
-	int addDelay();
-	void removeDelay(int id);
+	bool addDelay(int id);
+	bool removeDelay(int id);
 
 	void setParameter(int id, Parameters param, float value);
 	float getParameter(int id, Parameters param) const;
 	std::pair<float, float> process(float input);
 
 private:
-	std::vector<std::unique_ptr<Delay>> mDelays;
-	std::unordered_set<int> mActiveDelays;
-	std::priority_queue<int, std::vector<int>, std::greater<int>> mIdBackLog;
+	std::queue<std::shared_ptr<Delay>> mDelayQueue;
+	std::map<int, std::shared_ptr<Delay>> mDelayMap;
 
 	bool isValidId(int id) const;
 };

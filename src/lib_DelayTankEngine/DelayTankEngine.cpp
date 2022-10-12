@@ -3,31 +3,43 @@
 DelayTankEngine::DelayTankEngine(float maxDelayInSeconds, int maxNumDelays, float sampleRate)
 {
 	for (auto i = 0; i < maxNumDelays; i++) {
-		mDelays.emplace_back(new Delay(maxDelayInSeconds, sampleRate));
-		mIdBackLog.push(i);
+		mDelayQueue.emplace(new Delay(maxDelayInSeconds, sampleRate));
 	}
 }
 
 DelayTankEngine::~DelayTankEngine()
 {
-	mDelays.clear();
+	while (!mDelayQueue.empty())
+		mDelayQueue.pop();
 }
 
-int DelayTankEngine::addDelay()
+bool DelayTankEngine::addDelay(int id)
 {
-	if (mIdBackLog.empty()) throw Exception("Max Delays Reached");
-	auto id = mIdBackLog.top();
-	mIdBackLog.pop();
-	mActiveDelays.insert(id);
-	return id;
+	// Max of 10 delays
+	if (mDelayMap.size() >= 10)
+		return false;
+	
+	// Return if already exists
+	auto it = mDelayMap.find(id);
+	if (it != mDelayMap.end())
+		return false;
+
+	auto delay = mDelayQueue.front();
+	delay->resetParameters();
+	mDelayMap[id] = delay;
+	mDelayQueue.pop();
+	return true;
 }
 
-void DelayTankEngine::removeDelay(int id)
+bool DelayTankEngine::removeDelay(int id)
 {
-	if (!isValidId(id)) throw Exception("Invalid Id");
-	mActiveDelays.erase(id);
-	mIdBackLog.push(id);
-	mDelays.at(id)->resetParameters();
+	auto it = mDelayMap.find(id);
+	if (it != mDelayMap.end()) {
+		mDelayQueue.push(it->second);
+		mDelayMap.erase(it);
+		return true;
+	}
+	return false;
 }
 
 void DelayTankEngine::setParameter(int id, Parameters param, float value)
@@ -35,13 +47,13 @@ void DelayTankEngine::setParameter(int id, Parameters param, float value)
 	if (!isValidId(id)) throw Exception("Invalid Id");
 	switch (param) {
 	case Parameters::DelayTime:
-		mDelays.at(id)->setDelay(value);
+		mDelayMap.at(id)->setDelay(value);
 		break;
 	case Parameters::Gain:
-		mDelays.at(id)->setGain(value);
+		mDelayMap.at(id)->setGain(value);
 		break;
 	default:
-		mDelays.at(id)->setPan(value);
+		mDelayMap.at(id)->setPan(value);
 	}
 }
 
@@ -50,11 +62,11 @@ float DelayTankEngine::getParameter(int id, Parameters param) const
 	if (!isValidId(id)) throw Exception("Invalid Id");
 	switch (param) {
 	case Parameters::DelayTime:
-		return mDelays.at(id)->getDelay();
+		return mDelayMap.at(id)->getDelay();
 	case Parameters::Gain:
-		return mDelays.at(id)->getGain();
+		return mDelayMap.at(id)->getGain();
 	default:
-		return mDelays.at(id)->getPan();
+		return mDelayMap.at(id)->getPan();
 	}
 }
 
@@ -62,8 +74,8 @@ std::pair<float, float> DelayTankEngine::process(float input)
 {
 	auto outputSumL = 0.0f;
 	auto outputSumR = 0.0f;
-	for (auto& i : mActiveDelays) {
-		auto output = mDelays.at(i)->process(input);
+	for (auto& [id, delay] : mDelayMap) {
+		auto output = delay->process(input);
 		outputSumL += output.first;
 		outputSumR += output.second;
 	}
@@ -72,8 +84,8 @@ std::pair<float, float> DelayTankEngine::process(float input)
 
 bool DelayTankEngine::isValidId(int id) const
 {
-	auto found = mActiveDelays.find(id);
-	if (found != mActiveDelays.end())
+	auto found = mDelayMap.find(id);
+	if (found != mDelayMap.end())
 		return true;
 	return false;
 }
