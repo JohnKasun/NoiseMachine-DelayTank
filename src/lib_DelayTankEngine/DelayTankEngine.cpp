@@ -16,8 +16,9 @@ DelayTankEngine::~DelayTankEngine()
 bool DelayTankEngine::addDelay(int id)
 {
 	// Max of 10 delays
-	if (mDelayMap.size() >= 10)
+	if (mDelayQueue.empty()) {
 		return false;
+	}
 	
 	// Return if already exists
 	auto it = mDelayMap.find(id);

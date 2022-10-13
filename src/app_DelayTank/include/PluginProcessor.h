@@ -6,12 +6,6 @@
 
 juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-struct ParameterRatios {
-    float delaytimeRatio;
-    float panRatio;
-    float gainRatio;
-};
-
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -52,9 +46,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    int addDelay();
+    bool addDelay(int id);
+    bool removeDelay(int id);
+    void setParam(int id, DelayTankEngine::Parameters param, float value);
+    float getParam(int id, DelayTankEngine::Parameters param) const;
 
-    void requestParameterChange(int delayId, float delayTime, float gain, float pan);
     static int getMaxNumberOfDelays() { return MaxNumberOfDelays; };
 
 private:
@@ -64,7 +60,6 @@ private:
     std::array<std::array<std::atomic<float>*, 3>, MaxNumberOfDelays> mParamPtrs;
 
     std::unique_ptr<DelayTankEngine> mDelayTank;
-
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)

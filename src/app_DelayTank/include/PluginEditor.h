@@ -4,6 +4,7 @@
 #include "DelayTankLookAndFeel.h"
 
 #include <list>
+#include <algorithm>
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -17,8 +18,6 @@ public:
     void resized() override;
 
     void mouseDown(const juce::MouseEvent& event) override;
-    void mouseDrag(const juce::MouseEvent& event) override;
-    void mouseUp(const juce::MouseEvent& event) override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -27,7 +26,7 @@ private:
     juce::AudioProcessorValueTreeState& paramRef;
 
     std::list<Spot> mSpots;
-    Spot* dragging = nullptr;
+    void createSpot(int id, juce::Point<int> location);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

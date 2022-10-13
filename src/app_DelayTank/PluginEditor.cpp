@@ -29,23 +29,32 @@ void AudioPluginAudioProcessorEditor::resized()
 
 void AudioPluginAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
-    try {
-        auto id = processorRef.addDelay();
-        mSpots.emplace_back(id);
-        mSpots.back().setCenter(event.getMouseDownPosition());
-        addAndMakeVisible(mSpots.back());
+    static auto id = 0;
+    auto result = processorRef.addDelay(id);
+    if (result) {
+        createSpot(id, event.getMouseDownPosition());
+        id++;
     }
-    catch (Exception& ex) {
-        juce::Logger::outputDebugString("Max Delays Reached");
-    }
+    
 }
 
-void AudioPluginAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
+void AudioPluginAudioProcessorEditor::createSpot(int id, juce::Point<int> location)
 {
-
+    mSpots.emplace_back(id);
+    auto& spot = mSpots.back();
+    spot.setCenter(location);
+    spot.onClick = [this, &spot]() {
+        processorRef.removeDelay(spot.getId());
+        removeChildComponent(&spot);
+        auto it = std::find(mSpots.begin(), mSpots.end(), spot);
+        mSpots.erase(it);
+    };
+    spot.onDrag = [this, &spot, &location]() {
+        auto xNorm = spot.getCenter().x / getWidth();
+        auto yNorm = spot.getCenter().y / getHeight();
+        processorRef.setParam(spot.getId(), DelayTankEngine::Parameters::DelayTime, yNorm);
+        processorRef.setParam(spot.getId(), DelayTankEngine::Parameters::Pan, xNorm);
+        processorRef.setParam(spot.getId(), DelayTankEngine::Parameters::Gain, 1.0f);
+    };
+    addAndMakeVisible(spot);
 }
-
-void AudioPluginAudioProcessorEditor::mouseUp(const juce::MouseEvent& event)
-{
-}
-
