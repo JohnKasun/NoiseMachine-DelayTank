@@ -8,8 +8,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-        mSpots.emplace_back(i);
-        addChildComponent(mSpots.back());
+
     }
 
     setSize(400, 300);

@@ -5,10 +5,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 5, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 3, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), 0, 1, 1));
-        layout.add(std::make_unique<juce::AudioParameterBool>(juce::String(i) + "on", "Enabled" + juce::String(i), false));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), -100, 100, 0));
+        layout.add(std::make_unique<juce::AudioParameterBool>(juce::String(i) + "e", "Enabled" + juce::String(i), false));
     }
     return layout;
 }
@@ -25,7 +25,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
         mParamPtrs[i][0] = mParameters.getRawParameterValue(juce::String(i) + "d");
         mParamPtrs[i][1] = mParameters.getRawParameterValue(juce::String(i) + "g");
         mParamPtrs[i][2] = mParameters.getRawParameterValue(juce::String(i) + "p");
-        mParamPtrs[i][3] = mParameters.getRawParameterValue(juce::String(i) + "on");
+        mParamPtrs[i][3] = mParameters.getRawParameterValue(juce::String(i) + "e");
     }
 }
 
@@ -116,6 +116,30 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     juce::ignoreUnused (midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
+
+    for (int id = 0; id < mParamPtrs.size(); id++) {
+        mDelayTank->setParameter(id, DelayTankEngine::Parameters::DelayTime, *mParamPtrs.at(id).at(0));
+        mDelayTank->setParameter(id, DelayTankEngine::Parameters::Gain, *mParamPtrs.at(id).at(1));
+        mDelayTank->setParameter(id, DelayTankEngine::Parameters::Pan, *mParamPtrs.at(id).at(2));
+        if (static_cast<bool>(*mParamPtrs.at(id).at(3)))
+            mDelayTank->enableDelay(id);
+        else
+            mDelayTank->disableDelay(id);
+    }
+
+    auto inputBuffer = getBusBuffer(buffer, true, 0);
+    auto outputBuffer = getBusBuffer(buffer, false, 0);
+
+    for (int i = 0; i < inputBuffer.getNumSamples(); i++) {
+        auto input = 0.0f;
+        for (auto c = 0; c < inputBuffer.getNumChannels(); c++) {
+            input += inputBuffer.getSample(c, i);
+        }
+        auto output = mDelayTank->process(input);
+        outputBuffer.getWritePointer(0)[i] = output.first;
+        outputBuffer.getWritePointer(1)[i] = output.second;
+    }
+
 }
 
 //==============================================================================
@@ -126,8 +150,8 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor (*this, mParameters);
-   // return new juce::GenericAudioProcessorEditor(*this);
+    //return new AudioPluginAudioProcessorEditor (*this, mParameters);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================

@@ -18,12 +18,12 @@ private:
 	juce::Rectangle<int> mBounds;
 };
 
-class SpotAttachment : public juce::MouseListener, juce::AudioProcessorParameter::Listener
-{
-public:
-	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramId, Spot& spotToUse);
-	~SpotAttachment() = default;
-private:
-	Spot& spot;
-	juce::RangedAudioParameter* param;
-};
+//class SpotAttachment : public juce::MouseListener, juce::AudioProcessorParameter::Listener
+//{
+//public:
+//	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramId, Spot& spotToUse);
+//	~SpotAttachment() = default;
+//private:
+//	Spot& spot;
+//	juce::RangedAudioParameter* param;
+//};

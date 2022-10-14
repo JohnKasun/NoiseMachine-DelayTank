@@ -29,10 +29,10 @@ void Spot::resized()
 	setBounds(mBounds);
 }
 
-SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramId, Spot& spotToUse)
-	: spot(spotToUse), param(stateToUse.getParameter(paramId))
-{
-	assert(param);
-
-	spot.addMouseListener(this, false);
-}
+//SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramId, Spot& spotToUse)
+//	: spot(spotToUse), param(stateToUse.getParameter(paramId))
+//{
+//	assert(param);
+//
+//	spot.addMouseListener(this, false);
+//}
