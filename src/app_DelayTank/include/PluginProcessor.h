@@ -50,7 +50,7 @@ private:
     constexpr static int MaxNumberOfDelays = 10;
 
     juce::AudioProcessorValueTreeState mParameters;
-    std::array<std::array<std::atomic<float>*, 3>, MaxNumberOfDelays> mParamPtrs;
+    std::array<std::array<std::atomic<float>*, 4>, MaxNumberOfDelays> mParamPtrs;
 
     std::unique_ptr<DelayTankEngine> mDelayTank;
 

@@ -34,26 +34,21 @@ protected:
 	int mNumSamples = 10000;
 };
 
-TEST_F(DelayTankEngineTestSuite, ReachingMaxDelay) {
+TEST_F(DelayTankEngineTestSuite, EnablingDelays) {
 	for (int i = 0; i < 20; i++) {
 		if (i < 10)
-			EXPECT_TRUE(mDelayTank->addDelay(i));
+			EXPECT_NO_THROW(mDelayTank->enableDelay(i));
 		else
-			EXPECT_FALSE(mDelayTank->addDelay(i));
+			EXPECT_ANY_THROW(mDelayTank->enableDelay(i));
 	}
 }
 
-TEST_F(DelayTankEngineTestSuite, IDsAssignCorrectly) {
-	EXPECT_TRUE(mDelayTank->addDelay(0));
-	EXPECT_TRUE(mDelayTank->removeDelay(0));
-}
-
-TEST_F(DelayTankEngineTestSuite, RemovingNonExistentDelay) {
-	EXPECT_FALSE(mDelayTank->removeDelay(0));
+TEST_F(DelayTankEngineTestSuite, DisablingDelays) {
+	EXPECT_ANY_THROW(mDelayTank->disableDelay(-1));
 }
 
 TEST_F(DelayTankEngineTestSuite, ParametersSetCorrectly) {
-	mDelayTank->addDelay(0);
+	mDelayTank->enableDelay(0);
 	mDelayTank->setParameter(0, DelayTankEngine::Parameters::DelayTime, 0.01);
 	mDelayTank->setParameter(0, DelayTankEngine::Parameters::Gain, 0.5);
 	mDelayTank->setParameter(0, DelayTankEngine::Parameters::Pan, 50);
@@ -63,7 +58,7 @@ TEST_F(DelayTankEngineTestSuite, ParametersSetCorrectly) {
 }
 
 TEST_F(DelayTankEngineTestSuite, ParameterBoundsHandling) {
-	mDelayTank->addDelay(0);
+	mDelayTank->enableDelay(0);
 	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::DelayTime, -1));
 	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::DelayTime, 11));
 	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::Gain, -384));
@@ -73,29 +68,16 @@ TEST_F(DelayTankEngineTestSuite, ParameterBoundsHandling) {
 }
 
 TEST_F(DelayTankEngineTestSuite, SettingParametersOnNonExistentDelay) {
-	EXPECT_ANY_THROW(mDelayTank->setParameter(0, DelayTankEngine::Parameters::DelayTime, 0.3));
-}
-
-TEST_F(DelayTankEngineTestSuite, ParametersResetUponRemoval) {
-	auto id = 0;
-	mDelayTank->addDelay(id);
-	mDelayTank->setParameter(id, DelayTankEngine::Parameters::DelayTime, 5);
-	mDelayTank->setParameter(id, DelayTankEngine::Parameters::Gain, 0.23);
-	mDelayTank->setParameter(id, DelayTankEngine::Parameters::Pan, 76);
-	mDelayTank->removeDelay(id);
-	mDelayTank->addDelay(id);
-	EXPECT_EQ(0.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::DelayTime));
-	EXPECT_EQ(1.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Gain));
-	EXPECT_EQ(0.0f, mDelayTank->getParameter(id, DelayTankEngine::Parameters::Pan));
+	EXPECT_ANY_THROW(mDelayTank->setParameter(-1, DelayTankEngine::Parameters::DelayTime, 0.3));
 }
 
 TEST_F(DelayTankEngineTestSuite, MultipleDelayDelaytime) {
 	auto delay1Id = 1;
-	mDelayTank->addDelay(delay1Id);
+	mDelayTank->enableDelay(delay1Id);
 	auto delay2Id = 2;
-	mDelayTank->addDelay(delay2Id);
+	mDelayTank->enableDelay(delay2Id);
 	auto delay3Id = 3;
-	mDelayTank->addDelay(delay3Id);
+	mDelayTank->enableDelay(delay3Id);
 	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::DelayTime, 0.05);
 	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::DelayTime, 0.05);
 	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::DelayTime, 0.05);
@@ -114,11 +96,11 @@ TEST_F(DelayTankEngineTestSuite, MultipleDelayDelaytime) {
 
 TEST_F(DelayTankEngineTestSuite, MultipleDelayPan) {
 	auto delay1Id = 1;
-	mDelayTank->addDelay(delay1Id);
+	mDelayTank->enableDelay(delay1Id);
 	auto delay2Id = 2;
-	mDelayTank->addDelay(delay2Id);
+	mDelayTank->enableDelay(delay2Id);
 	auto delay3Id = 3;
-	mDelayTank->addDelay(delay3Id);
+	mDelayTank->enableDelay(delay3Id);
 	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::Pan, -100);
 	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::Pan, -100);
 	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::Pan, 100);
@@ -129,11 +111,11 @@ TEST_F(DelayTankEngineTestSuite, MultipleDelayPan) {
 
 TEST_F(DelayTankEngineTestSuite, MultipleDelayGain) {
 	auto delay1Id = 1;
-	mDelayTank->addDelay(delay1Id);
+	mDelayTank->enableDelay(delay1Id);
 	auto delay2Id = 2;
-	mDelayTank->addDelay(delay2Id);
+	mDelayTank->enableDelay(delay2Id);
 	auto delay3Id = 3;
-	mDelayTank->addDelay(delay3Id);
+	mDelayTank->enableDelay(delay3Id);
 	mDelayTank->setParameter(delay1Id, DelayTankEngine::Parameters::Gain, 0.5);
 	mDelayTank->setParameter(delay2Id, DelayTankEngine::Parameters::Gain, 0.1);
 	mDelayTank->setParameter(delay3Id, DelayTankEngine::Parameters::Gain, 0.2);

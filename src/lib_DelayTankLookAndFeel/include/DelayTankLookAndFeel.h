@@ -1,6 +1,9 @@
 #pragma once
 
+
+#include <cassert>
 #include <juce_gui_extra/juce_gui_extra.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 
 class Spot : public juce::Component
 {
@@ -13,4 +16,14 @@ public:
 private:
 	int mId;
 	juce::Rectangle<int> mBounds;
+};
+
+class SpotAttachment : public juce::MouseListener, juce::AudioProcessorParameter::Listener
+{
+public:
+	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramId, Spot& spotToUse);
+	~SpotAttachment() = default;
+private:
+	Spot& spot;
+	juce::RangedAudioParameter* param;
 };
