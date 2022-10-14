@@ -8,12 +8,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
+        auto id = juce::String(i);
         mSpots.emplace_back(i);
-        juce::String delayTimeParamId = juce::String(i) + "d";
-        juce::String gainParamId = juce::String(i) + "g";
-        juce::String panParamId = juce::String(i) + "p";
-        mSpotAttachments.emplace_back(new SpotAttachment(paramRef, panParamId, delayTimeParamId, gainParamId, mSpots.back()));
-        addAndMakeVisible(mSpots.back());
+        auto& spot = mSpots.back();
+        spot.setName("Spot " + id);
+        mSpotAttachments.emplace_back(new SpotAttachment(paramRef, id + "p", id + "d", id + "g", spot));
+        addAndMakeVisible(spot);
     }
 
     setSize(400, 300);

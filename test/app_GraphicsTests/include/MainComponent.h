@@ -11,7 +11,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public juce::Component, public juce::MouseListener
+class MainComponent : public juce::Component
 {
 public:
     //==============================================================================
@@ -22,11 +22,11 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    void mouseDown(const juce::MouseEvent& event) override;
+    void mouseDrag(const juce::MouseEvent& event) override;
 
 private:
 
-    std::list<Spot> mSpots;
+    Spot spot;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

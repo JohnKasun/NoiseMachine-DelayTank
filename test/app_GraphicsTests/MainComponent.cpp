@@ -3,13 +3,19 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    addAndMakeVisible(spot);
+    spot.setValueRangeX(juce::NormalisableRange<float>(0, 100));
+    spot.setValueRangeY(juce::NormalisableRange<float>(0, 50));
+
+    setInterceptsMouseClicks(true, false);
     setSize(400, 400);
-    addMouseListener(this, false);
+
+    spot.setValueX(100);
+    spot.setValueY(25);
 }
 
 MainComponent::~MainComponent()
 {
-    removeMouseListener(this);
 }
 
 //==============================================================================
@@ -20,13 +26,12 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    for (auto& spot : mSpots) {
-        spot.resized();
-    }
+    spot.resized();
 }
 
-void MainComponent::mouseDown(const juce::MouseEvent& event)
+void MainComponent::mouseDrag(const juce::MouseEvent& event)
 {
-    mSpots.emplace_back(0, juce::Rectangle<int>(event.x - 5, event.y - 5, 10, 10));
-    addAndMakeVisible(mSpots.back());
+    spot.setCenter(event.getPosition());
+    juce::Logger::outputDebugString("x: " + juce::String(spot.getValueX()));
+    juce::Logger::outputDebugString("y: " + juce::String(spot.getValueY()));
 }

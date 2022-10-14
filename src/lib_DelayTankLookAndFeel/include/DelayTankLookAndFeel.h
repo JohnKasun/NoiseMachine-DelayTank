@@ -12,29 +12,41 @@ public:
 	juce::Point<int> getCenter() const;
 	void paint(juce::Graphics& g) override;
 	void resized() override;
+
+	void setValueRangeX(juce::NormalisableRange<float> xRange);
+	void setValueRangeY(juce::NormalisableRange<float> yRange);
+	juce::NormalisableRange<float> getValueRangeX() const;
+	juce::NormalisableRange<float> getValueRangeY() const;
+
+	void setValueX(float value);
+	void setValueY(float value);
+	float getValueX() const;
+	float getValueY() const;
 private:
 	int mId;
 	juce::Rectangle<int> mBounds;
+	juce::NormalisableRange<float> mValueRangeX = juce::NormalisableRange<float>(0, 1);
+	juce::NormalisableRange<float> mValueRangeY = juce::NormalisableRange<float>(0, 1);
 };
 
 class SpotParameterAttachment : public juce::MouseListener
 {
 public:
-    SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot, juce::UndoManager* undoManager = nullptr);
+    SpotParameterAttachment(juce::RangedAudioParameter& xParam, juce::RangedAudioParameter& yParam, juce::RangedAudioParameter& sizeParam, Spot& spot);
     virtual ~SpotParameterAttachment();
 
-	// Update UI here
-	void parameterChangedCallback(float value);
 private:
     Spot& spot;
-    juce::ParameterAttachment attachment;
+    juce::ParameterAttachment xAttach;
+    juce::ParameterAttachment yAttach;
+    juce::ParameterAttachment sizeAttach;
 
 	// Update Parameter Here
 	void mouseDown(const juce::MouseEvent& event) override;
 	void mouseDrag(const juce::MouseEvent& event) override;
 	void mouseUp(const juce::MouseEvent& event) override;
 
-	
+
 };
 
 
@@ -44,7 +56,5 @@ public:
 	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse);
 	~SpotAttachment() = default;
 private:
-	std::unique_ptr<SpotParameterAttachment> attachX;
-	std::unique_ptr<SpotParameterAttachment> attachY;
-	std::unique_ptr<SpotParameterAttachment> attachSize;
+	std::unique_ptr<SpotParameterAttachment> attachment;
 };
