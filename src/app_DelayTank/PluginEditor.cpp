@@ -13,6 +13,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         juce::String gainParamId = juce::String(i) + "g";
         juce::String panParamId = juce::String(i) + "p";
         mSpotAttachments.emplace_back(new SpotAttachment(paramRef, panParamId, delayTimeParamId, gainParamId, mSpots.back()));
+        addAndMakeVisible(mSpots.back());
     }
 
     setSize(400, 300);

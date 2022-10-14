@@ -30,16 +30,39 @@ void Spot::resized()
 }
 
 SpotParameterAttachment::SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot, juce::UndoManager* undoManager)
-	: spot(spot), attachment(parameter, [this](float value) { callback(value); })
+	: spot(spot), attachment(parameter, [this](float value) { parameterChangedCallback(value); })
 {
+	spot.addMouseListener(this, false);
 }
 
 SpotParameterAttachment::~SpotParameterAttachment()
 {
+	spot.removeMouseListener(this);
 }
 
-void SpotParameterAttachment::callback(float value)
+void SpotParameterAttachment::parameterChangedCallback(float value)
 {
+	
+}
+
+void SpotParameterAttachment::mouseDown(const juce::MouseEvent& event)
+{
+	juce::Logger::outputDebugString(spot.getName() + " mouse down");
+	attachment.beginGesture();
+}
+
+void SpotParameterAttachment::mouseDrag(const juce::MouseEvent& event)
+{
+	juce::Logger::outputDebugString(spot.getName() + " mouse drag");
+
+	// Convert event to spot position then value
+	attachment.setValueAsPartOfGesture(0);
+}
+
+void SpotParameterAttachment::mouseUp(const juce::MouseEvent& event)
+{
+	juce::Logger::outputDebugString(spot.getName() + " mouse up");
+	attachment.endGesture();
 }
 
 

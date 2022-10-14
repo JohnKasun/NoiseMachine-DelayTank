@@ -17,17 +17,24 @@ private:
 	juce::Rectangle<int> mBounds;
 };
 
-class SpotParameterAttachment
+class SpotParameterAttachment : public juce::MouseListener
 {
 public:
     SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot, juce::UndoManager* undoManager = nullptr);
-    ~SpotParameterAttachment();
+    virtual ~SpotParameterAttachment();
 
-	void callback(float value);
+	// Update UI here
+	void parameterChangedCallback(float value);
 private:
     Spot& spot;
     juce::ParameterAttachment attachment;
-    bool ignoreCallbacks = false;
+
+	// Update Parameter Here
+	void mouseDown(const juce::MouseEvent& event) override;
+	void mouseDrag(const juce::MouseEvent& event) override;
+	void mouseUp(const juce::MouseEvent& event) override;
+
+	
 };
 
 

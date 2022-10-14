@@ -11,6 +11,7 @@ target_link_libraries(app_GraphicsTest
     PRIVATE 
         lib_DelayTankLookAndFeel
         juce::juce_gui_extra
+        juce::juce_audio_utils
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
