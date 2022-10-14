@@ -145,21 +145,6 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
     juce::ignoreUnused (data, sizeInBytes);
 }
 
-int AudioPluginAudioProcessor::addDelay()
-{
-    return mDelayTank->addDelay();
-}
-
-void AudioPluginAudioProcessor::requestParameterChange(int delayId, float delayTime, float gain, float pan)
-{
-    auto paramIdDelay = juce::String(delayId) + "d";
-    auto paramIdGain = juce::String(delayId) + "g";
-    auto paramIdPan = juce::String(delayId) + "p";
-    mParameters.getParameter(paramIdDelay)->setValueNotifyingHost(mParameters.getParameterRange(paramIdDelay).convertTo0to1(delayTime));
-    mParameters.getParameter(paramIdGain)->setValueNotifyingHost(mParameters.getParameterRange(paramIdGain).convertTo0to1(gain));
-    mParameters.getParameter(paramIdPan)->setValueNotifyingHost(mParameters.getParameterRange(paramIdPan).convertTo0to1(pan));
-}
-
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()

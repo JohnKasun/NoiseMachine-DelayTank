@@ -29,15 +29,7 @@ void AudioPluginAudioProcessorEditor::resized()
 
 void AudioPluginAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
-    try {
-        auto id = processorRef.addDelay();
-        mSpots.emplace_back(id);
-        mSpots.back().setCenter(event.getMouseDownPosition());
-        addAndMakeVisible(mSpots.back());
-    }
-    catch (Exception& ex) {
-        juce::Logger::outputDebugString("Max Delays Reached");
-    }
+
 }
 
 void AudioPluginAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)

@@ -26,8 +26,5 @@ private:
     AudioPluginAudioProcessor& processorRef;
     juce::AudioProcessorValueTreeState& paramRef;
 
-    std::list<Spot> mSpots;
-    Spot* dragging = nullptr;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

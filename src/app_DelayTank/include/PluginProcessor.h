@@ -4,14 +4,6 @@
 
 #include "DelayTankEngine.h"
 
-juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-
-struct ParameterRatios {
-    float delaytimeRatio;
-    float panRatio;
-    float gainRatio;
-};
-
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -52,9 +44,6 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    int addDelay();
-
-    void requestParameterChange(int delayId, float delayTime, float gain, float pan);
     static int getMaxNumberOfDelays() { return MaxNumberOfDelays; };
 
 private:
