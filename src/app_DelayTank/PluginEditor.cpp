@@ -8,7 +8,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-
+        mSpots.emplace_back(i);
+        juce::String delayTimeParamId = juce::String(i) + "d";
+        juce::String gainParamId = juce::String(i) + "g";
+        juce::String panParamId = juce::String(i) + "p";
+        mSpotAttachments.emplace_back(new SpotAttachment(paramRef, panParamId, delayTimeParamId, gainParamId, mSpots.back()));
     }
 
     setSize(400, 300);
@@ -33,12 +37,10 @@ void AudioPluginAudioProcessorEditor::resized()
 
 void AudioPluginAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
-
 }
 
 void AudioPluginAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 {
-
 }
 
 void AudioPluginAudioProcessorEditor::mouseUp(const juce::MouseEvent& event)

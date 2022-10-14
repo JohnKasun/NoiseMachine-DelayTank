@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <cassert>
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -18,12 +17,27 @@ private:
 	juce::Rectangle<int> mBounds;
 };
 
-//class SpotAttachment : public juce::MouseListener, juce::AudioProcessorParameter::Listener
-//{
-//public:
-//	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramId, Spot& spotToUse);
-//	~SpotAttachment() = default;
-//private:
-//	Spot& spot;
-//	juce::RangedAudioParameter* param;
-//};
+class SpotParameterAttachment
+{
+public:
+    SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot, juce::UndoManager* undoManager = nullptr);
+    ~SpotParameterAttachment();
+
+	void callback(float value);
+private:
+    Spot& spot;
+    juce::ParameterAttachment attachment;
+    bool ignoreCallbacks = false;
+};
+
+
+class SpotAttachment
+{
+public:
+	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse);
+	~SpotAttachment() = default;
+private:
+	std::unique_ptr<SpotParameterAttachment> attachX;
+	std::unique_ptr<SpotParameterAttachment> attachY;
+	std::unique_ptr<SpotParameterAttachment> attachSize;
+};

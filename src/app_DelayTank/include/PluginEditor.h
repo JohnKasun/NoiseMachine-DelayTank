@@ -26,7 +26,8 @@ private:
     AudioPluginAudioProcessor& processorRef;
     juce::AudioProcessorValueTreeState& paramRef;
 
-    std::vector<Spot> mSpots;
+    std::list<Spot> mSpots;
+    std::list<std::unique_ptr<SpotAttachment>> mSpotAttachments;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

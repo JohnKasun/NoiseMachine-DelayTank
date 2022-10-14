@@ -29,10 +29,35 @@ void Spot::resized()
 	setBounds(mBounds);
 }
 
-//SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramId, Spot& spotToUse)
-//	: spot(spotToUse), param(stateToUse.getParameter(paramId))
-//{
-//	assert(param);
-//
-//	spot.addMouseListener(this, false);
-//}
+SpotParameterAttachment::SpotParameterAttachment(juce::RangedAudioParameter& parameter, Spot& spot, juce::UndoManager* undoManager)
+	: spot(spot), attachment(parameter, [this](float value) { callback(value); })
+{
+}
+
+SpotParameterAttachment::~SpotParameterAttachment()
+{
+}
+
+void SpotParameterAttachment::callback(float value)
+{
+}
+
+
+std::unique_ptr<SpotParameterAttachment> makeAttachment(const juce::AudioProcessorValueTreeState& stateToUse,
+	const juce::String& parameterID,
+	Spot& spot)
+{
+	if (auto* parameter = stateToUse.getParameter(parameterID))
+		return std::make_unique<SpotParameterAttachment>(*parameter, spot, stateToUse.undoManager);
+
+	jassertfalse;
+	return nullptr;
+}
+
+SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse)
+	: attachX(makeAttachment(stateToUse, paramIdx, spotToUse)),
+	  attachY(makeAttachment(stateToUse, paramIdy, spotToUse)),
+	  attachSize(makeAttachment(stateToUse, paramIdSize, spotToUse))
+{
+
+}
