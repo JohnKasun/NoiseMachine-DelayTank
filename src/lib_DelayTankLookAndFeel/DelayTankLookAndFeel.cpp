@@ -1,142 +1,138 @@
 #include "DelayTankLookAndFeel.h"
 
-Spot::Spot(int id, juce::Rectangle<int> bounds)
-	: mId(id), mBounds(bounds)
+Spot::Spot()
 {
-	setBounds(mBounds);
-}
 
-void Spot::setCenter(juce::Point<int> newCenter)
-{
-	mBounds.setCentre(newCenter);
-	setBounds(mBounds);
-}
-
-juce::Point<int> Spot::getCenter() const
-{
-	return mBounds.getCentre();
 }
 
 void Spot::paint(juce::Graphics& g)
 {
-	auto area = getLocalBounds();
 	g.setColour(juce::Colours::red);
-	g.fillEllipse(area.toFloat());
+	g.fillAll();
 }
 
-void Spot::resized()
+void Spot::setRange(Dimension dimen, float min, float max)
 {
-	setBounds(mBounds);
+	switch (dimen) {
+	case Dimension::xAxis:
+		sliderX.setRange(min, max);
+		break;
+	default:
+		sliderY.setRange(min, max);
+	}
 }
 
-void Spot::setValueRangeX(juce::NormalisableRange<float> xRange)
+void Spot::setValue(Dimension dimen, float value)
 {
-	mValueRangeX = xRange;
+	switch (dimen) {
+	case Dimension::xAxis:
+		sliderX.setValue(value, juce::sendNotification);
+		break;
+	default:
+		sliderY.setValue(value, juce::sendNotification);
+	}
 }
 
-void Spot::setValueRangeY(juce::NormalisableRange<float> yRange)
+float Spot::getValue(Dimension dimen) const
 {
-	mValueRangeY = yRange;
+	switch (dimen) {
+	case Dimension::xAxis:
+		return sliderX.getValue();
+	default:
+		return sliderY.getValue();
+	}
 }
 
-juce::NormalisableRange<float> Spot::getValueRangeX() const
+void Spot::setNormValue(Dimension dimen, float value)
 {
-	return mValueRangeX;
+	auto denormValue = value;
+	switch (dimen) {
+	case Dimension::xAxis:
+		denormValue = value * (sliderX.getMaximum() - sliderX.getMinimum()) + sliderX.getMinimum();
+		sliderX.setValue(denormValue);
+		break;
+	default:
+		denormValue = value * (sliderY.getMaximum() - sliderY.getMinimum()) + sliderY.getMinimum();
+		sliderY.setValue(denormValue);
+		break;
+	}
 }
 
-juce::NormalisableRange<float> Spot::getValueRangeY() const
+float Spot::getNormValue(Dimension dimen)
 {
-	return mValueRangeY;
+	switch (dimen) {
+	case Dimension::xAxis:
+		return (sliderX.getValue() - sliderX.getMinimum()) / (sliderX.getMaximum() - sliderX.getMinimum());
+		break;
+	default:
+		return (sliderY.getValue() - sliderY.getMinimum()) / (sliderY.getMaximum() - sliderY.getMinimum());
+		break;
+	}
 }
 
-void Spot::setValueX(float value)
-{
-	auto valueNorm = mValueRangeX.convertTo0to1(value);
-	auto xPos = valueNorm * getParentWidth();
-	setCenter(juce::Point<int>(xPos, getCenter().y));
-}
-
-void Spot::setValueY(float value)
-{
-	auto valueNorm = mValueRangeY.convertTo0to1(value);
-	auto yPos = valueNorm * getParentHeight();
-	setCenter(juce::Point<int>(getCenter().x, yPos));
-}
-
-float Spot::getValueX() const
-{
-	auto xPosNorm = static_cast<float>(getCenter().x) / getParentWidth();
-	return mValueRangeX.convertFrom0to1(juce::jlimit<float>(0, 1, xPosNorm));
-}
-
-float Spot::getValueY() const
-{
-	auto yPosNorm = static_cast<float>(getCenter().y) / getParentHeight();
-	return mValueRangeY.convertFrom0to1(juce::jlimit<float>(0, 1, yPosNorm));
-}
-
-SpotParameterAttachment::SpotParameterAttachment(juce::RangedAudioParameter& xParam, juce::RangedAudioParameter& yParam, juce::RangedAudioParameter& sizeParam, Spot& spot)
-	: spot(spot), 
-	xAttach(xParam, [&spot](float rawValue) { spot.setValueX(rawValue); }),
-	yAttach(yParam, [&spot](float rawValue) { spot.setValueY(rawValue); }),
-	sizeAttach(sizeParam, [&spot](float rawValue) { ; })
-{
-	spot.setValueRangeX(xParam.getNormalisableRange());
-	spot.setValueRangeY(yParam.getNormalisableRange());
-
-	spot.addMouseListener(this, false);
-}
-
-SpotParameterAttachment::~SpotParameterAttachment()
-{
-	spot.removeMouseListener(this);
-}
-
-void SpotParameterAttachment::mouseDown(const juce::MouseEvent& event)
-{
-	juce::Logger::outputDebugString(spot.getName() + " mouse down");
-	xAttach.beginGesture();
-	yAttach.beginGesture();
-	sizeAttach.beginGesture();
-}
-
-void SpotParameterAttachment::mouseDrag(const juce::MouseEvent& event)
-{
-	juce::Logger::outputDebugString(spot.getName() + " mouse drag");
-
-	// Convert event to spot position then value
-	//xAttach.setValueAsPartOfGesture(xParamValue);
-	//yAttach.setValueAsPartOfGesture(yParamValue);
-
-}
-
-void SpotParameterAttachment::mouseUp(const juce::MouseEvent& event)
-{
-	juce::Logger::outputDebugString(spot.getName() + " mouse up");
-	xAttach.endGesture();
-	yAttach.endGesture();
-	sizeAttach.endGesture();
-}
-
-
-std::unique_ptr<SpotParameterAttachment> makeAttachment(const juce::AudioProcessorValueTreeState& stateToUse,
-	const juce::String& paramIdX,
-	const juce::String& paramIdY,
-	const juce::String& paramIdSize,
-	Spot& spot)
-{
-	auto* paramX = stateToUse.getParameter(paramIdX);
-	auto* paramY = stateToUse.getParameter(paramIdY);
-	auto* paramSize = stateToUse.getParameter(paramIdSize);
-	if (paramX && paramY && paramSize)
-		return std::make_unique<SpotParameterAttachment>(*paramX, *paramY, *paramSize, spot);
-
-	jassertfalse;
-	return nullptr;
-}
-
-SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse)
-	: attachment(makeAttachment(stateToUse, paramIdx, paramIdy, paramIdSize, spotToUse))
-{
-
-}
+//
+//SpotParameterAttachment::SpotParameterAttachment(juce::RangedAudioParameter& xParam, juce::RangedAudioParameter& yParam, juce::RangedAudioParameter& sizeParam, Spot& spot)
+//	: spot(spot), 
+//	xAttach(xParam, [&spot](float rawValue) { spot.setValueX(rawValue); }),
+//	yAttach(yParam, [&spot](float rawValue) { spot.setValueY(rawValue); }),
+//	sizeAttach(sizeParam, [&spot](float rawValue) { ; })
+//{
+//	spot.setValueRangeX(xParam.getNormalisableRange());
+//	spot.setValueRangeY(yParam.getNormalisableRange());
+//
+//	spot.addMouseListener(this, false);
+//}
+//
+//SpotParameterAttachment::~SpotParameterAttachment()
+//{
+//	spot.removeMouseListener(this);
+//}
+//
+//void SpotParameterAttachment::mouseDown(const juce::MouseEvent& event)
+//{
+//	juce::Logger::outputDebugString(spot.getName() + " mouse down");
+//	xAttach.beginGesture();
+//	yAttach.beginGesture();
+//	sizeAttach.beginGesture();
+//}
+//
+//void SpotParameterAttachment::mouseDrag(const juce::MouseEvent& event)
+//{
+//	juce::Logger::outputDebugString(spot.getName() + " mouse drag");
+//
+//	// Convert event to spot position then value
+//	//xAttach.setValueAsPartOfGesture(xParamValue);
+//	//yAttach.setValueAsPartOfGesture(yParamValue);
+//
+//}
+//
+//void SpotParameterAttachment::mouseUp(const juce::MouseEvent& event)
+//{
+//	juce::Logger::outputDebugString(spot.getName() + " mouse up");
+//	xAttach.endGesture();
+//	yAttach.endGesture();
+//	sizeAttach.endGesture();
+//}
+//
+//
+//std::unique_ptr<SpotParameterAttachment> makeAttachment(const juce::AudioProcessorValueTreeState& stateToUse,
+//	const juce::String& paramIdX,
+//	const juce::String& paramIdY,
+//	const juce::String& paramIdSize,
+//	Spot& spot)
+//{
+//	auto* paramX = stateToUse.getParameter(paramIdX);
+//	auto* paramY = stateToUse.getParameter(paramIdY);
+//	auto* paramSize = stateToUse.getParameter(paramIdSize);
+//	if (paramX && paramY && paramSize)
+//		return std::make_unique<SpotParameterAttachment>(*paramX, *paramY, *paramSize, spot);
+//
+//	jassertfalse;
+//	return nullptr;
+//}
+//
+//SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse)
+//	: attachment(makeAttachment(stateToUse, paramIdx, paramIdy, paramIdSize, spotToUse))
+//{
+//
+//}
