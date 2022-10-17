@@ -21,17 +21,21 @@ public:
 
 	void setNormValue(Dimension dimen, float value);
 	float getNormValue(Dimension dimen);
+
+	void setVisible(bool shouldBeVisible) override;
 private:
 	juce::Slider sliderX;
 	juce::Slider sliderY;
+	juce::TextButton buttonVisibility;
 };
 
 class SpotAttachment
 {
 public:
-	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, Spot& spotToUse);
+	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdVisibility, Spot& spotToUse);
 	~SpotAttachment() = default;
 private:
 	std::unique_ptr<juce::SliderParameterAttachment> attachmentX;
 	std::unique_ptr<juce::SliderParameterAttachment> attachmentY;
+	std::unique_ptr<juce::ButtonParameterAttachment> attachmentVisibility;
 };

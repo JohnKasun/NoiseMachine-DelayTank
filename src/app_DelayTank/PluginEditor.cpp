@@ -8,7 +8,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     addAndMakeVisible(spot);
-    spotAttachment.reset(new SpotAttachment(paramRef, "0p", "0d", spot));
+    spotAttachment.reset(new SpotAttachment(paramRef, "0p", "0d", "0e", spot));
 
     setSize(400, 300);
 }

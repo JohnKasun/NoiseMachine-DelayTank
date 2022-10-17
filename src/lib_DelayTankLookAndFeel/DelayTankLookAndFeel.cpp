@@ -70,21 +70,34 @@ float Spot::getNormValue(Dimension dimen)
 	}
 }
 
-std::unique_ptr<juce::SliderParameterAttachment> makeAttachment(const juce::AudioProcessorValueTreeState& stateToUse,
+void Spot::setVisible(bool shouldBeVisible)
+{
+	juce::Component::setVisible(shouldBeVisible);
+	buttonVisibility.setToggleState(shouldBeVisible, juce::sendNotification);
+	auto result = buttonVisibility.getToggleState();
+	if (result)
+		juce::Logger::outputDebugString("Button is on");
+	else
+		juce::Logger::outputDebugString("Button is off");
+}
+
+template<typename Attachment, typename Control>
+std::unique_ptr<Attachment> makeAttachment(const juce::AudioProcessorValueTreeState& stateToUse,
 	const juce::String& paramId,
-	juce::Slider& slider)
+	Control& control)
 {
 	auto* param = stateToUse.getParameter(paramId);
 	if (param)
-		return std::make_unique<juce::SliderParameterAttachment>(*param, slider);
+		return std::make_unique<Attachment>(*param, control);
 
 	jassertfalse;
 	return nullptr;
 }
 
-SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramIdx, const juce::String paramIdy, Spot& spotToUse)
-	: attachmentX(makeAttachment(stateToUse, paramIdx, spotToUse.sliderX)),
-	attachmentY(makeAttachment(stateToUse, paramIdy, spotToUse.sliderY))
+SpotAttachment::SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse, const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdVisibility, Spot& spotToUse)
+	: attachmentX(makeAttachment<juce::SliderParameterAttachment>(stateToUse, paramIdx, spotToUse.sliderX)),
+	attachmentY(makeAttachment<juce::SliderParameterAttachment>(stateToUse, paramIdy, spotToUse.sliderY)),
+	attachmentVisibility(makeAttachment<juce::ButtonParameterAttachment>(stateToUse, paramIdVisibility, spotToUse.buttonVisibility))
 {
 
 }
