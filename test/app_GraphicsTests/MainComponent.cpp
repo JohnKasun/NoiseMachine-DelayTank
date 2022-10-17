@@ -10,8 +10,6 @@ MainComponent::MainComponent()
     spot.setValue(Spot::xAxis, 5);
     spot.setValue(Spot::yAxis, 5);
 
-    setInterceptsMouseClicks(true, false);
-
     setSize(400, 400);
 }
 
@@ -30,21 +28,38 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    // Set initialize size of spots
-    spot.setBounds(0, 0, 10, 10);
+    spot.setSize(10, 10);
 }
 
 void MainComponent::mouseDown(const juce::MouseEvent& event)
 {
-
+    if (spot.getBoundsInParent().contains(event.mouseDownPosition.toInt()) && spot.isVisible()) {
+        juce::Logger::outputDebugString("Hit");
+        dragging = &spot;
+    }
 }
 
 void MainComponent::mouseDrag(const juce::MouseEvent& event)
 {
     // Update value of spots 
-    spot.setNormValue(Spot::xAxis, event.position.x / getWidth());
-    spot.setNormValue(Spot::yAxis, event.position.y / getHeight());
-    juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
-    juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
-    repaint();
+    if (dragging) {
+        spot.setNormValue(Spot::xAxis, event.position.x / getWidth());
+        spot.setNormValue(Spot::yAxis, event.position.y / getHeight());
+        juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
+        juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
+        repaint();
+    }
+}
+
+void MainComponent::mouseUp(const juce::MouseEvent& event)
+{
+    dragging = nullptr;
+}
+
+void MainComponent::mouseDoubleClick(const juce::MouseEvent& event)
+{
+    if (spot.isVisible())
+        spot.setVisible(false);
+    else
+        spot.setVisible(true);
 }

@@ -3,6 +3,7 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <list>
+#include <optional>
 
 #include "DelayTankLookAndFeel.h"
 
@@ -24,10 +25,13 @@ public:
 
     void mouseDown(const juce::MouseEvent& event) override;
     void mouseDrag(const juce::MouseEvent& event) override;
+    void mouseUp(const juce::MouseEvent& event) override;
+    void mouseDoubleClick(const juce::MouseEvent& event) override;
 
 private:
 
     Spot spot;
+    Spot* dragging = nullptr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

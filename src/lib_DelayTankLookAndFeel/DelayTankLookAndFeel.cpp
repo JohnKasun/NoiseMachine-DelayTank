@@ -2,7 +2,7 @@
 
 Spot::Spot()
 {
-
+	setInterceptsMouseClicks(false, false);
 }
 
 void Spot::paint(juce::Graphics& g)
