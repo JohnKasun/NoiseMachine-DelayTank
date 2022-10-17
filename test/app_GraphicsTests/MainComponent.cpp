@@ -43,11 +43,7 @@ void MainComponent::mouseDrag(const juce::MouseEvent& event)
 {
     // Update value of spots 
     if (dragging) {
-        spot.setNormValue(Spot::xAxis, event.position.x / getWidth());
-        spot.setNormValue(Spot::yAxis, event.position.y / getHeight());
-        juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
-        juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
-        repaint();
+        setSpotPosition(spot, event.position);
     }
 }
 
@@ -60,6 +56,17 @@ void MainComponent::mouseDoubleClick(const juce::MouseEvent& event)
 {
     if (spot.isVisible())
         spot.setVisible(false);
-    else
+    else {
         spot.setVisible(true);
+        setSpotPosition(spot, event.mouseDownPosition);
+    }
+}
+
+void MainComponent::setSpotPosition(Spot& spot, juce::Point<float> point)
+{
+    spot.setNormValue(Spot::xAxis, point.x / getWidth());
+    spot.setNormValue(Spot::yAxis, point.y / getHeight());
+    juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
+    juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
+    repaint();
 }

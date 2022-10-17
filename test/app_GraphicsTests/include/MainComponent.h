@@ -33,5 +33,7 @@ private:
     Spot spot;
     Spot* dragging = nullptr;
 
+    void setSpotPosition(Spot& spot, juce::Point<float> point);
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
