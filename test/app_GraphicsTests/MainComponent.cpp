@@ -7,8 +7,22 @@ MainComponent::MainComponent()
     addAndMakeVisible(spot);
     spot.setRange(Spot::xAxis, 0, 10);
     spot.setRange(Spot::yAxis, 0, 30);
+    spot.setRange(Spot::zAxis, 5, 20);
     spot.setValue(Spot::xAxis, 5);
     spot.setValue(Spot::yAxis, 5);
+    spot.setValue(Spot::zAxis, 10);
+    
+    addAndMakeVisible(gainSlider);
+    gainSlider.setRange(5, 20);
+    gainSlider.onValueChange = [this]() {
+        if (selected) {
+            selected->setValue(Spot::zAxis, gainSlider.getValue());
+            juce::Logger::outputDebugString("Z : " + juce::String(spot.getValue(Spot::zAxis)));
+        }
+    };
+    gainSlider.setSliderStyle(juce::Slider::Rotary);
+    gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+    gainSlider.setEnabled(false);
 
     setSize(400, 400);
 }
@@ -24,18 +38,22 @@ void MainComponent::paint(juce::Graphics& g)
     auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
     auto spotY = spot.getNormValue(Spot::yAxis) * getHeight();
     spot.setCentrePosition(spotX, spotY);
+    spot.setSize(spot.getValue(Spot::zAxis), spot.getValue(Spot::zAxis));
 }
 
 void MainComponent::resized()
 {
-    spot.setSize(10, 10);
+    gainSlider.setBounds(getLocalBounds().removeFromBottom(100).removeFromRight(100));
 }
 
 void MainComponent::mouseDown(const juce::MouseEvent& event)
 {
     if (spot.getBoundsInParent().contains(event.mouseDownPosition.toInt()) && spot.isVisible()) {
-        juce::Logger::outputDebugString("Hit");
         dragging = &spot;
+        selectSpot(spot);
+    }
+    else {
+        clearSelectedSpot();
     }
 }
 
@@ -69,4 +87,25 @@ void MainComponent::setSpotPosition(Spot& spot, juce::Point<float> point)
     juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
     juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
     repaint();
+}
+
+void MainComponent::selectSpot(Spot& spot)
+{
+    clearSelectedSpot();
+    selected = &spot;
+    selected->setColor(juce::Colours::yellow);
+    gainSlider.setEnabled(true);
+    gainSlider.setValue(selected->getValue(Spot::Dimension::zAxis));
+    repaint();
+}
+
+void MainComponent::clearSelectedSpot()
+{
+    if (selected) {
+        selected->setColor(juce::Colours::red);
+        selected = nullptr;
+        gainSlider.setValue(gainSlider.getMinimum(), juce::dontSendNotification);
+        gainSlider.setEnabled(false);
+        repaint();
+    }
 }

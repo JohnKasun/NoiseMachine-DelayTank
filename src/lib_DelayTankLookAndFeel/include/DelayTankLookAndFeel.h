@@ -10,7 +10,8 @@ class Spot : public juce::Component
 public:
 	enum Dimension {
 		xAxis,
-		yAxis
+		yAxis,
+		zAxis
 	};
 	Spot();
 	void paint(juce::Graphics& g) override;
@@ -23,19 +24,23 @@ public:
 	float getNormValue(Dimension dimen);
 
 	void setVisible(bool shouldBeVisible) override;
+	void setColor(juce::Colour newColor);
 private:
+	juce::Colour color = juce::Colours::red;
 	juce::Slider sliderX;
 	juce::Slider sliderY;
+	juce::Slider sliderZ;
 	juce::TextButton buttonVisibility;
 };
 
 class SpotAttachment
 {
 public:
-	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdVisibility, Spot& spotToUse);
+	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdz, const juce::String paramIdVisibility, Spot& spotToUse);
 	~SpotAttachment() = default;
 private:
 	std::unique_ptr<juce::SliderParameterAttachment> attachmentX;
 	std::unique_ptr<juce::SliderParameterAttachment> attachmentY;
+	std::unique_ptr<juce::SliderParameterAttachment> attachmentZ;
 	std::unique_ptr<juce::ButtonParameterAttachment> attachmentVisibility;
 };

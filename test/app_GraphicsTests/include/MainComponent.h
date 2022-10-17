@@ -32,8 +32,13 @@ private:
 
     Spot spot;
     Spot* dragging = nullptr;
+    Spot* selected = nullptr;
+
+    juce::Slider gainSlider;
 
     void setSpotPosition(Spot& spot, juce::Point<float> point);
+    void selectSpot(Spot& spot);
+    void clearSelectedSpot();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

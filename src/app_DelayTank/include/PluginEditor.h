@@ -27,14 +27,16 @@ private:
     AudioPluginAudioProcessor& processorRef;
     juce::AudioProcessorValueTreeState& paramRef;
 
-    std::list<Spot> mSpots;
-    std::list<std::unique_ptr<SpotAttachment>> mSpotAttachments;
-
     Spot spot;
     std::unique_ptr<SpotAttachment> spotAttachment;
     Spot* dragging = nullptr;
+    Spot* selected = nullptr;
+
+    juce::Slider gainSlider;
 
     void setSpotPosition(Spot& spot, juce::Point<float> point);
+    void selectSpot(Spot& spot);
+    void clearSelectedSpot();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
