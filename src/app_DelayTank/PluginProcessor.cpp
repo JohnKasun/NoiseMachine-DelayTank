@@ -8,7 +8,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 3, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), -100, 100, 0));
-        layout.add(std::make_unique<juce::AudioParameterBool>(juce::String(i) + "e", "Enabled" + juce::String(i), false));
+        layout.add(std::make_unique<juce::AudioParameterBool>(juce::String(i) + "e", "Enabled" + juce::String(i), true));
     }
     return layout;
 }

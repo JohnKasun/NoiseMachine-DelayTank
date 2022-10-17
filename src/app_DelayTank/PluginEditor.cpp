@@ -7,14 +7,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 {
     juce::ignoreUnused (processorRef);
 
-    for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-        auto id = juce::String(i);
-        mSpots.emplace_back(i);
-        auto& spot = mSpots.back();
-        spot.setName("Spot " + id);
-        mSpotAttachments.emplace_back(new SpotAttachment(paramRef, id + "p", id + "d", id + "g", spot));
-        addAndMakeVisible(spot);
-    }
+    addAndMakeVisible(spot);
+    spotAttachment.reset(new SpotAttachment(paramRef, "0p", "0d", spot));
 
     setSize(400, 300);
 }
@@ -23,28 +17,57 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
 }
 
-//==============================================================================
-void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
+void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    // Uses current spot values to set center position
+    auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
+    auto spotY = spot.getNormValue(Spot::yAxis) * getHeight();
+    spot.setCentrePosition(spotX, spotY);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    auto area = getLocalBounds();
-
+    spot.setSize(10, 10);
 }
 
 void AudioPluginAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
 {
+    if (spot.getBoundsInParent().contains(event.mouseDownPosition.toInt()) && spot.isVisible()) {
+        juce::Logger::outputDebugString("Hit");
+        dragging = &spot;
+    }
 }
 
 void AudioPluginAudioProcessorEditor::mouseDrag(const juce::MouseEvent& event)
 {
+    // Update value of spots 
+    if (dragging) {
+        setSpotPosition(spot, event.position);
+    }
 }
 
 void AudioPluginAudioProcessorEditor::mouseUp(const juce::MouseEvent& event)
 {
+    dragging = nullptr;
 }
+
+void AudioPluginAudioProcessorEditor::mouseDoubleClick(const juce::MouseEvent& event)
+{
+    if (spot.isVisible())
+        spot.setVisible(false);
+    else {
+        spot.setVisible(true);
+        setSpotPosition(spot, event.mouseDownPosition);
+    }
+}
+
+void AudioPluginAudioProcessorEditor::setSpotPosition(Spot& spot, juce::Point<float> point)
+{
+    spot.setNormValue(Spot::xAxis, point.x / getWidth());
+    spot.setNormValue(Spot::yAxis, point.y / getHeight());
+    juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
+    juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
+    repaint();
+}
+
 

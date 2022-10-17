@@ -6,6 +6,7 @@
 
 class Spot : public juce::Component
 {
+	friend class SpotAttachment;
 public:
 	enum Dimension {
 		xAxis,
@@ -25,32 +26,12 @@ private:
 	juce::Slider sliderY;
 };
 
-//class SpotParameterAttachment : public juce::MouseListener
-//{
-//public:
-//    SpotParameterAttachment(juce::RangedAudioParameter& xParam, juce::RangedAudioParameter& yParam, juce::RangedAudioParameter& sizeParam, Spot& spot);
-//    virtual ~SpotParameterAttachment();
-//
-//private:
-//    Spot& spot;
-//    juce::ParameterAttachment xAttach;
-//    juce::ParameterAttachment yAttach;
-//    juce::ParameterAttachment sizeAttach;
-//
-//	// Update Parameter Here
-//	void mouseDown(const juce::MouseEvent& event) override;
-//	void mouseDrag(const juce::MouseEvent& event) override;
-//	void mouseUp(const juce::MouseEvent& event) override;
-//
-//
-//};
-//
-//
-//class SpotAttachment
-//{
-//public:
-//	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdSize, Spot& spotToUse);
-//	~SpotAttachment() = default;
-//private:
-//	std::unique_ptr<SpotParameterAttachment> attachment;
-//};
+class SpotAttachment
+{
+public:
+	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, Spot& spotToUse);
+	~SpotAttachment() = default;
+private:
+	std::unique_ptr<juce::SliderParameterAttachment> attachmentX;
+	std::unique_ptr<juce::SliderParameterAttachment> attachmentY;
+};

@@ -19,6 +19,7 @@ public:
     void mouseDown(const juce::MouseEvent& event) override;
     void mouseDrag(const juce::MouseEvent& event) override;
     void mouseUp(const juce::MouseEvent& event) override;
+    void mouseDoubleClick(const juce::MouseEvent& event) override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -28,6 +29,12 @@ private:
 
     std::list<Spot> mSpots;
     std::list<std::unique_ptr<SpotAttachment>> mSpotAttachments;
+
+    Spot spot;
+    std::unique_ptr<SpotAttachment> spotAttachment;
+    Spot* dragging = nullptr;
+
+    void setSpotPosition(Spot& spot, juce::Point<float> point);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
