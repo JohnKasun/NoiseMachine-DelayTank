@@ -5,7 +5,7 @@ MainComponent::MainComponent()
 {
     // Initalize spot
     for (auto& spot : spots) {
-        addAndMakeVisible(spot);
+        addChildComponent(spot);
         spot.setRange(Spot::xAxis, 0, 10);
         spot.setRange(Spot::yAxis, 0, 30);
         spot.setRange(Spot::zAxis, 5, 20);
@@ -84,6 +84,7 @@ void MainComponent::mouseDoubleClick(const juce::MouseEvent& event)
             if (!spot.isVisible()) {
                 setSpotPosition(spot, event.mouseDownPosition);
                 spot.setVisible(true);
+                break;
             }
         }
     }
