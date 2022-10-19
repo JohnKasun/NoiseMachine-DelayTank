@@ -30,12 +30,14 @@ public:
 
 private:
 
+    std::array<Spot, 3> spots;
     Spot spot;
     Spot* dragging = nullptr;
     Spot* selected = nullptr;
 
     juce::Slider gainSlider;
 
+    Spot* getSpotAt(juce::Point<float> point);
     void setSpotPosition(Spot& spot, juce::Point<float> point);
     void selectSpot(Spot& spot);
     void clearSelectedSpot();
