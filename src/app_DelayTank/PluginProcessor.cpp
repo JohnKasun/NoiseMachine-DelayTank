@@ -5,10 +5,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "d", "DelayTime" + juce::String(i), 0, 3, 1));
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "g", "Gain" + juce::String(i), 0, 1, 1));
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::String(i) + "p", "Pan" + juce::String(i), -100, 100, 0));
-        layout.add(std::make_unique<juce::AudioParameterBool>(juce::String(i) + "e", "Enabled" + juce::String(i), true));
+        layout.add(std::make_unique<juce::AudioParameterFloat>("delay" + juce::String(i), "DelayTime " + juce::String(i), 0, 3, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>("gain" + juce::String(i), "Gain " + juce::String(i), 0, 1, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>("pan" + juce::String(i), "Pan " + juce::String(i), -100, 100, 0));
+        layout.add(std::make_unique<juce::AudioParameterBool>("enabled" + juce::String(i), "Enabled " + juce::String(i), true));
     }
     return layout;
 }
@@ -22,10 +22,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     mParameters(*this, nullptr, "Parameters", createParameterLayout())
 {
     for (int i = 0; i < MaxNumberOfDelays; i++) {
-        mParamPtrs[i][0] = mParameters.getRawParameterValue(juce::String(i) + "d");
-        mParamPtrs[i][1] = mParameters.getRawParameterValue(juce::String(i) + "g");
-        mParamPtrs[i][2] = mParameters.getRawParameterValue(juce::String(i) + "p");
-        mParamPtrs[i][3] = mParameters.getRawParameterValue(juce::String(i) + "e");
+        mParamPtrs[i][0] = mParameters.getRawParameterValue("delay" + juce::String(i));
+        mParamPtrs[i][1] = mParameters.getRawParameterValue("gain" + juce::String(i));
+        mParamPtrs[i][2] = mParameters.getRawParameterValue("pan" + juce::String(i));
+        mParamPtrs[i][3] = mParameters.getRawParameterValue("enabled" + juce::String(i));
     }
 }
 

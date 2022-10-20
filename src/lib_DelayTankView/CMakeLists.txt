@@ -2,11 +2,13 @@ set(LIB lib_DelayTankView)
 add_library(${LIB} 
     STATIC 
         include/DelayTankView.h 
+        include/DelayTankViewAttachment.h
         include/Spot.h
         include/SpotAttachment.h
         DelayTankView.cpp
         Spot.cpp
-        SpotAttachment.cpp)
+        SpotAttachment.cpp
+        DelayTankViewAttachment.cpp)
 target_include_directories(${LIB} PUBLIC include)
 target_link_libraries(${LIB} 
 PRIVATE 

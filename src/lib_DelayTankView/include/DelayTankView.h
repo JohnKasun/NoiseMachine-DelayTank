@@ -3,6 +3,7 @@
 
 class DelayTankView : public juce::Component 
 {
+    friend class DelayTankViewAttachment;
 public:
     //==============================================================================
     DelayTankView();

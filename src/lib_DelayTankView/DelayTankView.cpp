@@ -36,6 +36,8 @@ DelayTankView::~DelayTankView()
 //==============================================================================
 void DelayTankView::paint(juce::Graphics& g)
 {
+    g.setColour(juce::Colours::white);
+    g.fillAll();
     // Uses current spot values to set center position
     for (auto& spot : spots) {
         auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
