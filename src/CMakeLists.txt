@@ -1,3 +1,3 @@
 add_subdirectory(app_DelayTank)
 add_subdirectory(lib_DelayTankEngine)
-add_subdirectory(lib_DelayTankLookAndFeel)
+add_subdirectory(lib_DelayTankView)

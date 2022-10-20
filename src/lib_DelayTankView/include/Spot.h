@@ -32,15 +32,3 @@ private:
 	juce::Slider sliderZ;
 	juce::TextButton buttonVisibility;
 };
-
-class SpotAttachment
-{
-public:
-	SpotAttachment(juce::AudioProcessorValueTreeState& stateToUse,const juce::String paramIdx, const juce::String paramIdy, const juce::String paramIdz, const juce::String paramIdVisibility, Spot& spotToUse);
-	~SpotAttachment() = default;
-private:
-	std::unique_ptr<juce::SliderParameterAttachment> attachmentX;
-	std::unique_ptr<juce::SliderParameterAttachment> attachmentY;
-	std::unique_ptr<juce::SliderParameterAttachment> attachmentZ;
-	std::unique_ptr<juce::ButtonParameterAttachment> attachmentVisibility;
-};

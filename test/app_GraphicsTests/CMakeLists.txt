@@ -9,7 +9,7 @@ target_sources(app_GraphicsTest
 target_include_directories(app_GraphicsTest PUBLIC include)
 target_link_libraries(app_GraphicsTest 
     PRIVATE 
-        lib_DelayTankLookAndFeel
+        lib_DelayTankView
         juce::juce_gui_extra
         juce::juce_audio_utils
     PUBLIC
