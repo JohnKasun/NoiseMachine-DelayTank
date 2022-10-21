@@ -7,7 +7,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 {
     juce::ignoreUnused (processorRef);
     addAndMakeVisible(delayTank);
-    delayTankAttachment.reset(new DelayTankViewAttachment(paramRef, "delay", "gain", "pan", "enabled", delayTank));
+    delayTankAttachment.reset(new DelayTankViewAttachment(paramRef, "pan", "delay", "gain", "enabled", delayTank));
 
     setSize(400, 400);
 }

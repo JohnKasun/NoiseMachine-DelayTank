@@ -10,10 +10,10 @@ DelayTankView::DelayTankView(int numSpots)
     }
 
     addAndMakeVisible(gainSlider);
-    gainSlider.setRange(5, 20);
+    gainSlider.setRange(0, 1);
     gainSlider.onValueChange = [this]() {
         if (selected) {
-            selected->setValue(Spot::zAxis, gainSlider.getValue());
+            selected->setNormValue(Spot::zAxis, gainSlider.getValue());
             juce::Logger::outputDebugString("Z : " + juce::String(selected->getValue(Spot::zAxis)));
         }
     };
@@ -31,14 +31,15 @@ DelayTankView::~DelayTankView()
 //==============================================================================
 void DelayTankView::paint(juce::Graphics& g)
 {
-    g.setColour(juce::Colours::white);
-    g.fillAll();
+    //g.setColour(juce::Colours::white);
+    //g.fillAll();
     // Uses current spot values to set center position
     for (auto& spot : spots) {
         auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
         auto spotY = spot.getNormValue(Spot::yAxis) * getHeight();
+        auto spotZ = spot.getNormValue(Spot::zAxis) * 10 + 10;
         spot.setCentrePosition(spotX, spotY);
-        spot.setSize(spot.getValue(Spot::zAxis), spot.getValue(Spot::zAxis));
+        spot.setSize(spotZ, spotZ);
     }
 }
 

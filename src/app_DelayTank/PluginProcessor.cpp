@@ -6,7 +6,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     for (int i = 0; i < AudioPluginAudioProcessor::getMaxNumberOfDelays(); i++) {
         layout.add(std::make_unique<juce::AudioParameterFloat>("delay" + juce::String(i), "DelayTime " + juce::String(i), 0, 3, 1));
-        layout.add(std::make_unique<juce::AudioParameterFloat>("gain" + juce::String(i), "Gain " + juce::String(i), 0, 1, 1));
+        layout.add(std::make_unique<juce::AudioParameterFloat>("gain" + juce::String(i), "Gain " + juce::String(i), 0.1, 1, 1));
         layout.add(std::make_unique<juce::AudioParameterFloat>("pan" + juce::String(i), "Pan " + juce::String(i), -100, 100, 0));
         layout.add(std::make_unique<juce::AudioParameterBool>("enabled" + juce::String(i), "Enabled " + juce::String(i), true));
     }
