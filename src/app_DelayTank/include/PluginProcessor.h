@@ -47,7 +47,7 @@ public:
     static int getMaxNumberOfDelays() { return MaxNumberOfDelays; };
 
 private:
-    constexpr static int MaxNumberOfDelays = 3;
+    constexpr static int MaxNumberOfDelays = 10;
 
     juce::AudioProcessorValueTreeState mParameters;
     std::array<std::array<std::atomic<float>*, 4>, MaxNumberOfDelays> mParamPtrs;
