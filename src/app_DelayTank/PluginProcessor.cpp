@@ -89,7 +89,7 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    mDelayTank.reset(new DelayTankEngine(3, 10, sampleRate));
+    mDelayTank.reset(new DelayTankEngine(3, MaxNumberOfDelays, sampleRate));
 }
 
 void AudioPluginAudioProcessor::releaseResources()

@@ -3,7 +3,7 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), processorRef (p), paramRef(vts)
+    : AudioProcessorEditor (&p), processorRef (p), paramRef(vts), delayTank(processorRef.getMaxNumberOfDelays())
 {
     juce::ignoreUnused (processorRef);
     addAndMakeVisible(delayTank);
@@ -24,6 +24,7 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g)
 
 void AudioPluginAudioProcessorEditor::resized()
 {
+    delayTank.setBounds(getBounds());
 }
 
 

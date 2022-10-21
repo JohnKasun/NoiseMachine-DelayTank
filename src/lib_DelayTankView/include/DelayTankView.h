@@ -1,12 +1,13 @@
+#pragma once
+
 #include "Spot.h"
-#include "SpotAttachment.h"
 
 class DelayTankView : public juce::Component 
 {
     friend class DelayTankViewAttachment;
 public:
     //==============================================================================
-    DelayTankView();
+    DelayTankView(int numSpots = 10);
     ~DelayTankView() override;
 
     //==============================================================================
@@ -20,7 +21,7 @@ public:
 
 private:
 
-    std::array<Spot, 3> spots;
+    std::vector<Spot> spots;
     Spot* dragging = nullptr;
     Spot* selected = nullptr;
 

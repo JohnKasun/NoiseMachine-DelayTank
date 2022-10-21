@@ -1,17 +1,12 @@
 #include "DelayTankView.h"
 
 //==============================================================================
-DelayTankView::DelayTankView()
+DelayTankView::DelayTankView(int numSpots)
+    : spots(numSpots)
 {
     // Initalize spot
     for (auto& spot : spots) {
         addChildComponent(spot);
-        spot.setRange(Spot::xAxis, 0, 10);
-        spot.setRange(Spot::yAxis, 0, 30);
-        spot.setRange(Spot::zAxis, 5, 20);
-        spot.setValue(Spot::xAxis, 5);
-        spot.setValue(Spot::yAxis, 5);
-        spot.setValue(Spot::zAxis, 10);
     }
 
     addAndMakeVisible(gainSlider);
