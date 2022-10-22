@@ -23,12 +23,16 @@ private:
 
     std::vector<Spot> spots;
     Spot* dragging = nullptr;
+    Spot* resizing = nullptr;
     Spot* selected = nullptr;
 
     juce::Slider gainSlider;
 
     Spot* getSpotAt(juce::Point<float> point);
     void setSpotPosition(Spot& spot, juce::Point<float> point);
+    void setSpotSize(Spot& spot, const juce::MouseEvent& event);
     void selectSpot(Spot& spot);
     void clearSelectedSpot();
+
+    juce::Time lastMouseClick;
 };
