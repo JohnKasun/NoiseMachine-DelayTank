@@ -42,9 +42,7 @@ std::pair<float, float> Delay::process(float input)
 
 void Delay::resetParameters()
 {
-	while (mDelayLine->getNumValuesInBuffer() != 0) {
-		mDelayLine->getPostInc();
-	}
+	mDelayLine->reset();
 	setDelay(0.0f);
 	setPan(0.0f);
 	setGain(1.0f);

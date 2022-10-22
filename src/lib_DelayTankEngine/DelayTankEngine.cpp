@@ -26,6 +26,7 @@ void DelayTankEngine::disableDelay(int id)
 
 	mActiveDelayIds.erase(id);
 	mInactiveDelayIds.insert(id);
+	mDelays.at(id)->resetParameters();
 }
 
 std::set<int> DelayTankEngine::getActiveDelayIds() const
