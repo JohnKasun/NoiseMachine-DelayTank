@@ -54,6 +54,7 @@ void DelayTankView::mouseDown(const juce::MouseEvent& event)
         auto diffClicks = event.eventTime - lastMouseClick;
         if (diffClicks.inMilliseconds() < juce::MouseEvent::getDoubleClickTimeout()) {
             resizing = spot;
+            resizeStart = spot->getNormValue(Spot::zAxis);
         }
         else {
             dragging = spot;
@@ -81,6 +82,7 @@ void DelayTankView::mouseUp(const juce::MouseEvent& event)
 {
     dragging = nullptr;
     resizing = nullptr;
+    resizeStart = 0.0f;
 }
 
 void DelayTankView::mouseDoubleClick(const juce::MouseEvent& event)
@@ -121,11 +123,9 @@ void DelayTankView::setSpotPosition(Spot& spot, juce::Point<float> point)
 
 void DelayTankView::setSpotSize(Spot& spot, const juce::MouseEvent& event)
 {
-    auto sensitivity = 20;
-    auto yDiff = spot.getBounds().getCentreY() - event.position.y;
-    auto yDiffNorm = yDiff / getHeight();
-    auto newSize = spot.getNormValue(Spot::zAxis) + yDiffNorm / 20;
-    spot.setNormValue(Spot::zAxis, yDiffNorm);
+    auto yDiffNorm = static_cast<float>(event.getDistanceFromDragStartY()) / getHeight();
+    auto newSizeNorm = resizeStart - yDiffNorm;
+    spot.setNormValue(Spot::zAxis, newSizeNorm);
     juce::Logger::outputDebugString("Z : " + juce::String(spot.getValue(Spot::zAxis)));
     repaint();
 }

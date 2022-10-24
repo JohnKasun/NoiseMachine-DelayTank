@@ -35,4 +35,5 @@ private:
     void clearSelectedSpot();
 
     juce::Time lastMouseClick;
+    float resizeStart = 0.0f;
 };
