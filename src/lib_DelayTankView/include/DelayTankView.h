@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Spot.h"
+#include <functional>
 
-class DelayTankView : public juce::Component 
+class DelayTankView : public juce::Component
 {
     friend class DelayTankViewAttachment;
 public:
@@ -18,6 +19,8 @@ public:
     void mouseDrag(const juce::MouseEvent& event) override;
     void mouseUp(const juce::MouseEvent& event) override;
     void mouseDoubleClick(const juce::MouseEvent& event) override;
+
+    std::function<void(const Spot* spot)> onSpotUpdate = {};
 
 private:
 

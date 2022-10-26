@@ -5,10 +5,12 @@ add_library(${LIB}
         include/DelayTankViewAttachment.h
         include/Spot.h
         include/SpotAttachment.h
+        include/InfoPanel.h
         DelayTankView.cpp
         Spot.cpp
         SpotAttachment.cpp
-        DelayTankViewAttachment.cpp)
+        DelayTankViewAttachment.cpp
+        InfoPanel.cpp)
 target_include_directories(${LIB} PUBLIC include)
 target_link_libraries(${LIB} 
 PRIVATE 

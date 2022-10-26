@@ -18,6 +18,8 @@ DelayTankView::~DelayTankView()
 //==============================================================================
 void DelayTankView::paint(juce::Graphics& g)
 {
+    g.setColour(juce::Colours::black);
+    g.fillAll();
     for (auto& spot : spots) {
         auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
         auto spotY = spot.getNormValue(Spot::yAxis) * getHeight();
@@ -49,6 +51,7 @@ void DelayTankView::mouseDown(const juce::MouseEvent& event)
     else {
         clearSelectedSpot();
     }
+    onSpotUpdate(selected);
 }
 
 void DelayTankView::mouseDrag(const juce::MouseEvent& event)
@@ -59,6 +62,7 @@ void DelayTankView::mouseDrag(const juce::MouseEvent& event)
     else if (resizing) {
         setSpotSize(*resizing, event);
     }
+    onSpotUpdate(selected);
 }
 
 void DelayTankView::mouseUp(const juce::MouseEvent& event)
@@ -66,6 +70,7 @@ void DelayTankView::mouseUp(const juce::MouseEvent& event)
     dragging = nullptr;
     resizing = nullptr;
     resizeStart = 0.0f;
+    onSpotUpdate(selected);
 }
 
 void DelayTankView::mouseDoubleClick(const juce::MouseEvent& event)
@@ -99,8 +104,6 @@ void DelayTankView::setSpotPosition(Spot& spot, juce::Point<float> point)
 {
     spot.setNormValue(Spot::xAxis, point.x / getWidth());
     spot.setNormValue(Spot::yAxis, point.y / getHeight());
-    juce::Logger::outputDebugString("X : " + juce::String(spot.getValue(Spot::xAxis)));
-    juce::Logger::outputDebugString("Y : " + juce::String(spot.getValue(Spot::yAxis)));
     repaint();
 }
 
@@ -109,7 +112,6 @@ void DelayTankView::setSpotSize(Spot& spot, const juce::MouseEvent& event)
     auto yDiffNorm = static_cast<float>(event.getDistanceFromDragStartY()) / getHeight();
     auto newSizeNorm = resizeStart - yDiffNorm;
     spot.setNormValue(Spot::zAxis, newSizeNorm);
-    juce::Logger::outputDebugString("Z : " + juce::String(spot.getValue(Spot::zAxis)));
     repaint();
 }
 

@@ -85,11 +85,6 @@ void Spot::setVisible(bool shouldBeVisible)
 {
 	juce::Component::setVisible(shouldBeVisible);
 	buttonVisibility.setToggleState(shouldBeVisible, juce::sendNotification);
-	auto result = buttonVisibility.getToggleState();
-	if (result)
-		juce::Logger::outputDebugString("Button is on");
-	else
-		juce::Logger::outputDebugString("Button is off");
 }
 
 void Spot::setColor(juce::Colour newColor)
