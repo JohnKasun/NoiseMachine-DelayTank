@@ -22,7 +22,7 @@ void DelayTankView::paint(juce::Graphics& g)
     g.fillAll();
     for (auto& spot : spots) {
         auto spotX = spot.getNormValue(Spot::xAxis) * getWidth();
-        auto spotY = spot.getNormValue(Spot::yAxis) * getHeight();
+        auto spotY = (1.0f - spot.getNormValue(Spot::yAxis)) * getHeight();
         auto spotZ = spot.getNormValue(Spot::zAxis) * getHeight() / 10.0f + getHeight() / 40.0f;
         spot.setCentrePosition(spotX, spotY);
         spot.setSize(spotZ, spotZ);
@@ -103,7 +103,7 @@ Spot* DelayTankView::getSpotAt(juce::Point<float> point)
 void DelayTankView::setSpotPosition(Spot& spot, juce::Point<float> point)
 {
     spot.setNormValue(Spot::xAxis, point.x / getWidth());
-    spot.setNormValue(Spot::yAxis, point.y / getHeight());
+    spot.setNormValue(Spot::yAxis, 1.0f - (point.y / getHeight()));
     repaint();
 }
 
