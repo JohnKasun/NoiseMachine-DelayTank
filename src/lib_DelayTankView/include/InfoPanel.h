@@ -2,15 +2,22 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
+// Make this a map?
 class InfoPanel : public juce::Component
 {
 public:
-	InfoPanel() = default;
+	enum parameters{
+		Delaytime,
+		Pan,
+		Gain,
+		numParameters
+	};
+	InfoPanel();
 	~InfoPanel() = default;
 
 	void paint(juce::Graphics& g) override;
 
-	void setText(juce::String);
+	void setParameterValue(parameters param, float value);
 private:
-	juce::String text;
+	float parameterValues[numParameters]{};
 };

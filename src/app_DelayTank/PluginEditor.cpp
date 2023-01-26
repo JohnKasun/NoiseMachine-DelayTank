@@ -12,7 +12,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     addAndMakeVisible(infoPanel);
 
-    setSize(DelayTankWidth, DelayTankHeight + InfoPanelHeight);
+    setSize(DelayTankWidth + InfoPanelWidth, DelayTankHeight);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
@@ -28,7 +28,7 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g)
 void AudioPluginAudioProcessorEditor::resized()
 {
     auto area = getBounds();
-    delayTank.setBounds(area.removeFromTop(DelayTankHeight));
+    delayTank.setBounds(area.removeFromLeft(DelayTankWidth));
     infoPanel.setBounds(area);
 }
 

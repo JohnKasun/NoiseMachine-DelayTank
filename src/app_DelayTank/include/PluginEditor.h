@@ -14,7 +14,7 @@ public:
     enum {
         DelayTankWidth = 700,
         DelayTankHeight = 500,
-        InfoPanelHeight = 200
+        InfoPanelWidth = 200
     };
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor&, juce::AudioProcessorValueTreeState&);
     ~AudioPluginAudioProcessorEditor() override;
